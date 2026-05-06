@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Calendario Partite</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <div class="card shadow">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+            <h2 class="mb-0">Calendario e Risultati</h2>
+            <a th:href="@{/}" class="btn btn-outline-light btn-sm">Home</a>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0 align-middle">
+                <thead class="table-light">
+                <tr>
+                    <th>Data</th>
+                    <th>Stato</th>
+                    <th class="text-center">Incontro</th>
+                    <th class="text-center">Risultato</th>
+                    <th>Arbitro</th>
+                    <th class="text-center">Azioni</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="partita : ${partite}">
+                    <td class="small" th:text="${#temporals.format(partita.dataOra, 'dd/MM HH:mm')}"></td>
+                    <td>
+                                <span class="badge"
+                                      th:classappend="${partita.stato == 'TERMINATA' ? 'bg-secondary' : 'bg-warning text-dark'}"
+                                      th:text="${partita.stato}"></span>
+                    </td>
+                    <td class="text-center">
+                        <span class="fw-bold" th:text="${partita.squadraCasa != null ? partita.squadraCasa.nome : '-'}"></span>
+                        <span class="text-muted mx-2">vs</span>
+                        <span class="fw-bold" th:text="${partita.squadraTrasferta != null ? partita.squadraTrasferta.nome : '-'}"></span>
+                    </td>
+                    <td class="text-center">
+                                <span class="badge bg-dark fs-6">
+                                    <span th:text="${partita.goalsHome != null ? partita.goalsHome : '0'}"></span>
+                                    -
+                                    <span th:text="${partita.goalsAway != null ? partita.goalsAway : '0'}"></span>
+                                </span>
+                    </td>
+                    <td class="small" th:text="${partita.arbitro != null ? partita.arbitro.nome + ' ' + partita.arbitro.cognome : 'TBA'}"></td>
+                    <td class="text-center">
+                        <div class="btn-group">
+                            <a th:href="@{'/admin/formUpdatePartita/' + ${partita.id}}" class="btn btn-primary btn-sm">Modifica</a>
+                            <a th:href="@{'/admin/deletePartita/' + ${partita.id}}" class="btn btn-danger btn-sm" onclick="return confirm('Eliminare?')">Elimina</a>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer bg-white text-end py-3">
+            <a th:href="@{/admin/formNewPartita}" class="btn btn-dark fw-bold">
+                <i class="bi bi-calendar-plus me-1"></i>Programma Nuova Partita
+            </a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

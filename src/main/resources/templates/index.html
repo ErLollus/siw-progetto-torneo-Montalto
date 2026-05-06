@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SiwTorneo - Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        .card-dashboard {
+            transition: transform 0.3s, shadow 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+        .card-dashboard:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            color: inherit;
+        }
+    </style>
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-5 shadow">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="#">
+            <i class="bi bi-trophy-fill me-2 text-warning"></i>SiwTorneo
+        </a>
+        <div class="d-flex align-items-center">
+                <span class="text-white me-3" th:if="${#authentication.name != 'anonymousUser'}">
+                    Benvenuto, <strong th:text="${#authentication.name}">Utente</strong>
+                </span>
+            <form th:action="@{/logout}" method="post" th:if="${#authentication.name != 'anonymousUser'}">
+                <button class="btn btn-outline-danger btn-sm" type="submit">Esci</button>
+            </form>
+            <a th:href="@{/login}" class="btn btn-outline-success btn-sm" th:if="${#authentication.name == 'anonymousUser'}">Accedi</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold">Pannello di Controllo</h1>
+        <p class="lead text-muted">Gestisci i tuoi tornei, le squadre e i risultati in un unico posto.</p>
+    </div>
+
+    <div class="row g-4 justify-content-center">
+
+        <div class="col-md-4 col-lg-3">
+            <a th:href="@{/tornei}" class="card h-100 border-0 shadow-sm card-dashboard text-center p-3">
+                <div class="card-body">
+                    <i class="bi bi-trophy fs-1 text-primary"></i>
+                    <h4 class="card-title mt-3">Tornei</h4>
+                    <p class="card-text text-muted small">Crea e gestisci le competizioni stagionali.</p>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-4 col-lg-3">
+            <a th:href="@{/squadre}" class="card h-100 border-0 shadow-sm card-dashboard text-center p-3">
+                <div class="card-body">
+                    <i class="bi bi-shield-shaded fs-1 text-success"></i>
+                    <h4 class="card-title mt-3">Squadre</h4>
+                    <p class="card-text text-muted small">Iscrivi nuove squadre e assegna le città.</p>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-4 col-lg-3">
+            <a th:href="@{/giocatori}" class="card h-100 border-0 shadow-sm card-dashboard text-center p-3">
+                <div class="card-body">
+                    <i class="bi bi-people fs-1 text-info"></i>
+                    <h4 class="card-title mt-3">Giocatori</h4>
+                    <p class="card-text text-muted small">Anagrafica completa e trasferimenti.</p>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-4 col-lg-3">
+            <a th:href="@{/partite}" class="card h-100 border-0 shadow-sm card-dashboard text-center p-3">
+                <div class="card-body">
+                    <i class="bi bi-calendar-event fs-1 text-danger"></i>
+                    <h4 class="card-title mt-3">Partite</h4>
+                    <p class="card-text text-muted small">Calendario e inserimento risultati.</p>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-4 col-lg-3">
+            <a th:href="@{/arbitri}" class="card h-100 border-0 shadow-sm card-dashboard text-center p-3">
+                <div class="card-body">
+                    <i class="bi bi-person-badge fs-1 text-secondary"></i>
+                    <h4 class="card-title mt-3">Arbitri</h4>
+                    <p class="card-text text-muted small">Designazioni e albo direttori di gara.</p>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-4 col-lg-3" th:if="${#authentication.name == 'anonymousUser'}">
+            <a th:href="@{/register}" class="card h-100 border-0 shadow-sm card-dashboard text-center p-3 bg-warning-subtle">
+                <div class="card-body">
+                    <i class="bi bi-person-plus fs-1 text-warning"></i>
+                    <h4 class="card-title mt-3">Registrati</h4>
+                    <p class="card-text text-muted small">Crea un account per iniziare a gestire.</p>
+                </div>
+            </a>
+        </div>
+
+    </div>
+
+    <footer class="mt-5 pt-5 pb-3 text-center text-muted border-top">
+        <p>&copy; 2026 SiwTorneo - Progetto Web Java Spring Boot</p>
+    </footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

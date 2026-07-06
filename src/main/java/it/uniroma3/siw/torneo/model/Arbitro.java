@@ -1,6 +1,7 @@
 package it.uniroma3.siw.torneo.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import java.util.List;
 
 @Entity
@@ -10,11 +11,17 @@ public class Arbitro {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @NotBlank(message = "Il nome è obbligatorio")
     private String nome;
+
+    @NotBlank(message = "Il cognome è obbligatorio")
     private String cognome;
+
+    @NotBlank(message = "Il codice arbitrale è obbligatorio")
+    @Column(unique = true)
     private String codiceArbitrale;
 
-    @OneToMany(mappedBy = "arbitro")
+    @OneToMany(mappedBy = "arbitro", fetch = FetchType.LAZY)
     private List<Partita> partiteDirette;
 
     // --- GETTER E SETTER ---

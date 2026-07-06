@@ -4,7 +4,12 @@ import it.uniroma3.siw.torneo.model.Utente;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface UtenteRepository extends CrudRepository<Utente, Long> {
-    // Non devi scrivere nulla qui dentro!
+
+    Optional<Utente> findByUsername(String username);
+
+    boolean existsByUsername(String username);
 }

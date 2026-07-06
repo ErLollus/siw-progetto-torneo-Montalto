@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Modifica partita')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-9 col-lg-8">
+            <div class="card card-soft p-4">
+                <h1 class="section-title h4 mb-4"><i class="bi bi-pencil-square text-brand me-2"></i>Gestione match</h1>
+                <form th:action="@{/admin/updatePartita}" th:object="${partita}" method="post">
+                    <input type="hidden" th:field="*{id}">
+                    <input type="hidden" th:field="*{torneo}">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Data e ora</label>
+                            <input type="datetime-local" class="form-control" th:field="*{dataOra}">
+                            <div class="text-danger small mt-1" th:if="${#fields.hasErrors('dataOra')}" th:errors="*{dataOra}"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Stato</label>
+                            <select class="form-select" th:field="*{stato}">
+                                <option value="PROGRAMMATA">Programmata</option>
+                                <option value="TERMINATA">Terminata</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Luogo</label>
+                        <input type="text" class="form-control" th:field="*{luogo}">
+                        <div class="text-danger small mt-1" th:if="${#fields.hasErrors('luogo')}" th:errors="*{luogo}"></div>
+                    </div>
+                    <div class="card bg-light border-0 mb-3">
+                        <div class="card-body row text-center g-2">
+                            <div class="col-md-5">
+                                <label class="form-label">Squadra casa</label>
+                                <select class="form-select mb-2" th:field="*{squadraCasa}">
+                                    <option th:each="s : ${squadre}" th:value="${s.id}" th:text="${s.nome}"></option>
+                                </select>
+                                <input type="number" min="0" class="form-control text-center fs-4" th:field="*{goalsHome}" placeholder="Gol">
+                            </div>
+                            <div class="col-md-2 align-self-center"><h3 class="mb-0 mt-4">:</h3></div>
+                            <div class="col-md-5">
+                                <label class="form-label">Squadra trasferta</label>
+                                <select class="form-select mb-2" th:field="*{squadraTrasferta}">
+                                    <option th:each="s : ${squadre}" th:value="${s.id}" th:text="${s.nome}"></option>
+                                </select>
+                                <input type="number" min="0" class="form-control text-center fs-4" th:field="*{goalsAway}" placeholder="Gol">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Arbitro</label>
+                        <select class="form-select" th:field="*{arbitro}">
+                            <option th:each="a : ${arbitri}" th:value="${a.id}" th:text="${a.nome + ' ' + a.cognome}"></option>
+                        </select>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-brand">Salva modifiche</button>
+                        <a th:href="@{/partite}" class="btn btn-outline-secondary">Annulla</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

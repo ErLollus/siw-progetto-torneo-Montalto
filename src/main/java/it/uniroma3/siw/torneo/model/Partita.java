@@ -1,6 +1,9 @@
 package it.uniroma3.siw.torneo.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Min;
 import java.time.LocalDateTime;
 
 @Entity
@@ -10,23 +13,31 @@ public class Partita {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @NotNull(message = "La data e ora della partita sono obbligatorie")
     private LocalDateTime dataOra;
+
+    @NotBlank(message = "Il luogo è obbligatorio")
     private String luogo;
+
+    @Min(value = 0, message = "I gol non possono essere negativi")
     private Integer goalsHome;
+
+    @Min(value = 0, message = "I gol non possono essere negativi")
     private Integer goalsAway;
+
     private String stato; // es. "PROGRAMMATA", "TERMINATA"
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "torneo_id")
     private Torneo torneo;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Squadra squadraCasa;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Squadra squadraTrasferta;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Arbitro arbitro;
 
     // --- GETTER E SETTER ---

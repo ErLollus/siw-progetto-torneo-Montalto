@@ -3,9 +3,11 @@ package it.uniroma3.siw.torneo.controller;
 import it.uniroma3.siw.torneo.model.SquadraClassifica;
 import it.uniroma3.siw.torneo.model.Torneo;
 import it.uniroma3.siw.torneo.service.TorneoService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,19 +24,36 @@ public class TorneoController {
     @GetMapping("/tornei") // Quando l'utente va su http://localhost:8080/tornei
     public String getTornei(Model model) {
         // Prendi tutti i tornei dal Service e mettili nel "Model" (il cestino per la pagina HTML)
+        model.addAttribute("tornei",this.torneoService.count());
         model.addAttribute("tornei", this.torneoService.findAll());
-        return "tornei.html"; // Vai a cercare il file tornei.html nella cartella templates
+        return "tornei/list.html"; // Vai a cercare il file tornei.html nella cartella templates
     }
+
+    // Dettaglio di un torneo: squadre partecipanti + calendario partite + link classifica (Sez. 4.1)
+    @GetMapping("/torneo/{id}")
+    public String getTorneo(@PathVariable("id") Long id, Model model) {
+        Torneo torneo = this.torneoService.findById(id);
+        if (torneo == null) {
+            return "redirect:/tornei";
+        }
+        model.addAttribute("torneo", torneo);
+        return "tornei/show";
+    }
+
     // 1. Metodo per mostrare il form di inserimento
     @GetMapping("/admin/formNewTorneo")
     public String formNewTorneo(Model model) {
         model.addAttribute("torneo", new Torneo()); // Passiamo un oggetto vuoto da riempire
-        return "admin/formNewTorneo.html";
+        return "admin/tornei/formNew.html";
     }
 
     // 2. Metodo per ricevere i dati e salvare
     @PostMapping("/admin/torneo")
-    public String newTorneo(@ModelAttribute("torneo") Torneo torneo) {
+    public String newTorneo(@Valid @ModelAttribute("torneo") Torneo torneo,
+                            BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "admin/tornei/formNew.html";
+        }
         this.torneoService.saveTorneo(torneo); // Salviamo il nuovo torneo
         return "redirect:/tornei"; // Dopo il salvataggio, torna alla lista
     }
@@ -50,12 +69,16 @@ public class TorneoController {
         // Cerchiamo il torneo sul DB tramite l'id
         Torneo torneo = this.torneoService.findById(id);
         model.addAttribute("torneo", torneo);
-        return "admin/formUpdateTorneo.html";
+        return "admin/tornei/formUpdate.html";
     }
 
     // 2. Salva le modifiche (usa lo stesso endpoint del "newTorneo")
     @PostMapping("/admin/updateTorneo")
-    public String updateTorneo(@ModelAttribute("torneo") Torneo torneo) {
+    public String updateTorneo(@Valid @ModelAttribute("torneo") Torneo torneo,
+                               BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "admin/tornei/formUpdate.html";
+        }
         // Se 'torneo' ha l'id valorizzato, il save farà l'UPDATE sul DB
         this.torneoService.saveTorneo(torneo);
         return "redirect:/tornei";
@@ -67,12 +90,12 @@ public class TorneoController {
 
         model.addAttribute("torneo", torneo);
         model.addAttribute("classifica", classifica);
-        return "classifica.html";
+        return "tornei/classifica.html";
     }
     @GetMapping("/torneo/{id}/classifica-react")
     public String visualizzaClassificaReact(@PathVariable("id") Long id, Model model) {
         // Passiamo solo l'ID, i dati li caricherà React via API
         model.addAttribute("torneoId", id);
-        return "classifica_react";
+        return "tornei/classifica-react";
     }
 }

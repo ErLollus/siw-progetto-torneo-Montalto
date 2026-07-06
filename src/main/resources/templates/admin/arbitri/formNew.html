@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Nuovo arbitro')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-6">
+            <div class="card card-soft p-4">
+                <h1 class="section-title h4 mb-4"><i class="bi bi-person-badge text-brand me-2"></i>Nuovo arbitro</h1>
+                <form th:action="@{/admin/arbitro}" th:object="${arbitro}" method="post">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Nome</label>
+                            <input type="text" class="form-control" th:field="*{nome}">
+                            <div class="text-danger small mt-1" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Cognome</label>
+                            <input type="text" class="form-control" th:field="*{cognome}">
+                            <div class="text-danger small mt-1" th:if="${#fields.hasErrors('cognome')}" th:errors="*{cognome}"></div>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Codice arbitrale</label>
+                        <input type="text" class="form-control" th:field="*{codiceArbitrale}" placeholder="es. ARB-003">
+                        <div class="text-danger small mt-1" th:if="${#fields.hasErrors('codiceArbitrale')}" th:errors="*{codiceArbitrale}"></div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-brand">Registra arbitro</button>
+                        <a th:href="@{/arbitri}" class="btn btn-outline-secondary">Annulla</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

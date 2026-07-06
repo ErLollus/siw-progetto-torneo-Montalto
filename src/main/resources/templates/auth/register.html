@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Registrazione')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-5">
+            <div class="card card-soft p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <span class="brand-badge d-inline-flex" style="width:52px;height:52px;font-size:1.5rem"><i class="bi bi-person-plus"></i></span>
+                    <h1 class="section-title h4 mt-3 mb-1">Crea un account</h1>
+                    <p class="text-muted small mb-0">Unisciti al gestionale del torneo</p>
+                </div>
+
+                <form th:action="@{/register}" th:object="${utente}" method="post">
+                    <div class="row g-2 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Nome</label>
+                            <input type="text" class="form-control" th:field="*{nome}">
+                            <div class="text-danger small mt-1" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Cognome</label>
+                            <input type="text" class="form-control" th:field="*{cognome}">
+                            <div class="text-danger small mt-1" th:if="${#fields.hasErrors('cognome')}" th:errors="*{cognome}"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-control" th:field="*{username}">
+                        <div class="text-danger small mt-1" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" th:field="*{password}">
+                        <div class="text-danger small mt-1" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                    </div>
+                    <button class="btn btn-brand w-100 py-2 fw-bold" type="submit">Registrati</button>
+                </form>
+
+                <div class="text-center mt-4 pt-3 border-top">
+                    <span class="small text-muted">Sei già registrato?</span>
+                    <a th:href="@{/login}" class="fw-bold text-decoration-none">Accedi</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

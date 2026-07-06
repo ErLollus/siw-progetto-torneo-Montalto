@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Nuova partita')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-9 col-lg-8">
+            <div class="card card-soft p-4">
+                <h1 class="section-title h4 mb-4"><i class="bi bi-calendar-plus text-brand me-2"></i>Programma partita</h1>
+                <form th:action="@{/admin/partita}" th:object="${partita}" method="post">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Data e ora</label>
+                            <input type="datetime-local" class="form-control" th:field="*{dataOra}">
+                            <div class="text-danger small mt-1" th:if="${#fields.hasErrors('dataOra')}" th:errors="*{dataOra}"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Torneo</label>
+                            <select class="form-select" th:field="*{torneo}">
+                                <option th:each="t : ${tornei}" th:value="${t.id}" th:text="${t.nome}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Luogo</label>
+                        <input type="text" class="form-control" th:field="*{luogo}" placeholder="es. Stadio Comunale">
+                        <div class="text-danger small mt-1" th:if="${#fields.hasErrors('luogo')}" th:errors="*{luogo}"></div>
+                    </div>
+                    <div class="row g-3 mb-3 align-items-end">
+                        <div class="col-md-5">
+                            <label class="form-label">Squadra casa</label>
+                            <select class="form-select" th:field="*{squadraCasa}">
+                                <option th:each="s : ${squadre}" th:value="${s.id}" th:text="${s.nome}"></option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 text-center"><span class="fw-bold text-muted">VS</span></div>
+                        <div class="col-md-5">
+                            <label class="form-label">Squadra trasferta</label>
+                            <select class="form-select" th:field="*{squadraTrasferta}">
+                                <option th:each="s : ${squadre}" th:value="${s.id}" th:text="${s.nome}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Arbitro</label>
+                        <select class="form-select" th:field="*{arbitro}">
+                            <option th:each="a : ${arbitri}" th:value="${a.id}" th:text="${a.nome + ' ' + a.cognome}"></option>
+                        </select>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-brand">Pubblica nel calendario</button>
+                        <a th:href="@{/partite}" class="btn btn-outline-secondary">Annulla</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

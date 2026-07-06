@@ -19,11 +19,23 @@ public class PartitaService {
         this.partitaRepository.save(partita);
     }
 
+    @Transactional(readOnly = true)
     public List<Partita> findAll() {
         List<Partita> partite = new ArrayList<>();
         this.partitaRepository.findAll().forEach(partite::add);
         return partite;
     }
+
+    /**
+     * Calendario partite con TUTTE le associazioni caricate in un'unica query
+     * (join fetch): evita il problema delle N+1 query nella vista /partite.
+     */
+    @Transactional(readOnly = true)
+    public List<Partita> findAllConDettagli() {
+        return this.partitaRepository.findAllWithDettagli();
+    }
+
+    @Transactional(readOnly = true)
     public Partita findById(Long id) {
         return this.partitaRepository.findById(id).orElse(null);
     }

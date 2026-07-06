@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Squadre')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="section-title h3 mb-0"><i class="bi bi-shield-shaded text-brand me-2"></i>Squadre</h1>
+        <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/formNewSquadra}" class="btn btn-brand">
+            <i class="bi bi-plus-lg me-1"></i>Nuova squadra
+        </a>
+    </div>
+    <form th:action="@{/squadre}" method="get" class="d-flex gap-2 mb-3">
+        <input type="text" name="q" th:value="${q}" class="form-control" placeholder="Cerca per nome o città...">
+        <p th:if="${squadre.size() > 0}" class="text-muted small mb-0">Trovate <span th:text="${squadre.size()}"></span> squadre</p>
+        <p th:if="${squadre.size() == 0}" class="text-muted small mb-0">Nessuna squadra trovata</p>
+        <a th:href="@{/squadre(q=${q}, ordina=${ordina} ? false : true)}" class="btn btn-outline-brand">
+            <i class="bi bi-sort-alpha-down"></i> Ordina per nome
+        </a>
+        <button class="btn btn-outline-brand" type="submit"><i class="bi bi-search"></i></button>
+        <a th:href="@{/squadre}" class="btn btn-outline-secondary">Azzera</a>
+    </form>
+
+    <div class="card card-soft">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>Nome</th>
+                    <th>Città</th>
+                    <th>Fondazione</th>
+                    <th>Tornei</th>
+                    <th class="text-end">Azioni</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="squadra : ${squadre}">
+                    <td>
+                        <img th:if="${squadra.immagine}"
+                             th:src="${#strings.startsWith(squadra.immagine, 'http') ? squadra.immagine : '/uploads/' + squadra.immagine}"
+                             alt="Logo" style="height:32px;width:32px;object-fit:cover;border-radius:8px">
+                        <span th:unless="${squadra.immagine}" class="dot" th:style="'background-color:' + (${squadra.coloreMaglia} ?: '#cccccc')"></span>
+                    </td>
+                    <td class="fw-semibold">
+                        <a th:href="@{'/squadra/' + ${squadra.id}}" class="text-decoration-none" th:text="${squadra.nome}"></a>
+                    </td>
+                    <td th:text="${squadra.citta}"></td>
+                    <td th:text="${squadra.annoFondazione}"></td>
+                    <td>
+                        <span th:each="t : ${squadra.tornei}" class="badge badge-soft me-1" th:text="${t.nome}"></span>
+                    </td>
+                    <td class="text-end">
+                        <a th:href="@{'/squadra/' + ${squadra.id}}" class="btn btn-outline-brand btn-sm">Rosa</a>
+                        <span sec:authorize="hasRole('ADMIN')">
+                            <a th:href="@{'/admin/formUpdateSquadra/' + ${squadra.id}}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-pencil"></i></a>
+                            <a th:href="@{'/admin/deleteSquadra/' + ${squadra.id}}" class="btn btn-outline-danger btn-sm"
+                               onclick="return confirm('Eliminare questa squadra?')"><i class="bi bi-trash"></i></a>
+                        </span>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(squadre)}">
+                    <td colspan="6" class="text-center text-muted py-4">Nessuna squadra presente.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Partite')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="section-title h3 mb-0"><i class="bi bi-calendar-event text-brand me-2"></i>Calendario e risultati</h1>
+        <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/formNewPartita}" class="btn btn-brand">
+            <i class="bi bi-plus-lg me-1"></i>Nuova partita
+        </a>
+    </div>
+
+    <div class="card card-soft">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Stato</th>
+                    <th class="text-center">Incontro</th>
+                    <th class="text-center">Risultato</th>
+                    <th>Arbitro</th>
+                    <th class="text-end">Azioni</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="partita : ${partite}">
+                    <td class="small text-muted" th:text="${#temporals.format(partita.dataOra, 'dd/MM HH:mm')}"></td>
+                    <td>
+                        <span class="badge"
+                              th:classappend="${partita.stato == 'TERMINATA'} ? 'badge-soft' : 'text-bg-warning'"
+                              th:text="${partita.stato}"></span>
+                    </td>
+                    <td class="text-center">
+                        <span class="dot me-1" th:style="'background-color:' + (${partita.squadraCasa != null ? partita.squadraCasa.coloreMaglia : '#ccc'})"></span>
+                        <span class="fw-semibold" th:text="${partita.squadraCasa != null ? partita.squadraCasa.nome : '-'}"></span>
+                        <span class="text-muted mx-2">vs</span>
+                        <span class="fw-semibold" th:text="${partita.squadraTrasferta != null ? partita.squadraTrasferta.nome : '-'}"></span>
+                        <span class="dot ms-1" th:style="'background-color:' + (${partita.squadraTrasferta != null ? partita.squadraTrasferta.coloreMaglia : '#ccc'})"></span>
+                    </td>
+                    <td class="text-center">
+                        <span class="badge text-bg-dark fs-6">
+                            <span th:text="${partita.goalsHome != null ? partita.goalsHome : '-'}"></span>
+                            :
+                            <span th:text="${partita.goalsAway != null ? partita.goalsAway : '-'}"></span>
+                        </span>
+                    </td>
+                    <td class="small" th:text="${partita.arbitro != null ? partita.arbitro.nome + ' ' + partita.arbitro.cognome : 'TBA'}"></td>
+                    <td class="text-end">
+                        <a th:href="@{'/partita/' + ${partita.id}}" class="btn btn-outline-brand btn-sm">
+                            <i class="bi bi-chat-dots"></i> Dettaglio
+                        </a>
+                        <span sec:authorize="hasRole('ADMIN')">
+                            <a th:href="@{'/admin/formUpdatePartita/' + ${partita.id}}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-pencil"></i></a>
+                            <a th:href="@{'/admin/deletePartita/' + ${partita.id}}" class="btn btn-outline-danger btn-sm"
+                               onclick="return confirm('Eliminare?')"><i class="bi bi-trash"></i></a>
+                        </span>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(partite)}">
+                    <td colspan="6" class="text-center text-muted py-4">Nessuna partita in calendario.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

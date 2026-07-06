@@ -36,11 +36,14 @@ public class ArbitroService {
         }
     }
 
+    @Transactional(readOnly = true)
     public List<Arbitro> findAll() {
         List<Arbitro> arbitri = new ArrayList<>();
         this.arbitroRepository.findAll().forEach(arbitri::add);
         return arbitri;
     }
+
+    @Transactional(readOnly = true)
     public Arbitro findById(Long id) {
         return this.arbitroRepository.findById(id).orElse(null);
     }

@@ -1,0 +1,92 @@
+/* ============================================================
+   SiwTorneo — tema moderno condiviso
+   ============================================================ */
+:root {
+    --brand: #3b82f6;          /* blu principale, bottoni e badge */
+    --brand-dark: #1d4ed8;     /* blu più scuro, hover e bordi */
+    --brand-darker: #021e87;   /* blu scurissimo, sfondo hero */
+    --ink: #0f172a;            /* nero testo */
+    --muted: #64748b;          /* grigio testo secondario */
+    --bg: #f1f5f9;             /* sfondo pagina */
+    --card: #ffffff;           /* sfondo card */
+    --ring: rgb(2 30 135);     /* alone focus bottoni/input */
+    --shadow: 0 10px 30px rgba(2, 6, 23, .08); /* ombra card/hero */
+    --radius: 18px;            /* raggio angoli */
+}
+
+* { box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background:
+        radial-gradient(1200px 500px at 100% -10%, rgb(2 30 135), transparent 60%),      /* macchia blu in alto a destra */
+        radial-gradient(1000px 500px at -10% 0%, rgb(4 44 140 / 0.08), transparent 55%), /* macchia blu chiara in alto a sinistra */
+        var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+}
+
+/* ---------- Navbar ---------- */
+.navbar-siw {
+    background: rgba(255, 255, 255, .75);       /* sfondo navbar, bianco trasparente */
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(2, 6, 23, .06); /* riga sotto la navbar */
+}
+.navbar-siw .navbar-brand { font-weight: 800; letter-spacing: -.02em; color: var(--ink); } /* testo "SiwTorneo" */
+.navbar-siw .brand-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 34px; height: 34px; border-radius: 10px; margin-right: .5rem;
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark)); /* quadratino logo */
+    color: #fff; /* icona dentro il logo */
+}
+.navbar-siw .nav-link { color: var(--muted); font-weight: 600; border-radius: 10px; padding: .4rem .8rem; } /* link navbar */
+.navbar-siw .nav-link:hover, .navbar-siw .nav-link.active { color: var(--brand-dark); background: rgba(16,185,129,.08); } /* link navbar hover/attivo */
+
+/* ---------- Hero ---------- */
+.hero {
+    background: linear-gradient(135deg, var(--brand-darker), var(--brand-dark)); /* sfondo box hero */
+    color: #eafff6; border-radius: var(--radius); box-shadow: var(--shadow);     /* testo hero */
+    overflow: hidden; position: relative;
+}
+.hero::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(600px 200px at 90% -20%, rgba(255,255,255,.18), transparent 60%); /* riflesso in alto a dx */
+}
+.hero h1 { font-weight: 800; letter-spacing: -.03em; }
+
+/* ---------- Card ---------- */
+.card { border: 1px solid rgba(2, 6, 23, .06); border-radius: var(--radius); background: var(--card); }
+.card-soft { box-shadow: var(--shadow); }
+.tile {
+    text-decoration: none; color: inherit; display: block; height: 100%;
+    border-radius: var(--radius); transition: transform .25s ease, box-shadow .25s ease;
+}
+.tile:hover { transform: translateY(-6px); box-shadow: var(--shadow); color: inherit; }
+.tile .icon-wrap {
+    width: 56px; height: 56px; border-radius: 14px; display: inline-flex;
+    align-items: center; justify-content: center; font-size: 1.6rem;
+}
+
+/* ---------- Buttons ---------- */
+.btn-brand { background: linear-gradient(135deg, var(--brand), var(--brand-dark)); border: none; color: #fff; font-weight: 700; } /* bottone pieno */
+.btn-brand:hover { color: #fff; filter: brightness(.97); }
+.btn-outline-brand { border: 1.5px solid var(--brand-dark); color: var(--brand-dark); font-weight: 700; background: transparent; } /* bottone outline */
+.btn-outline-brand:hover { background: var(--brand-dark); color: #fff; } /* bottone outline hover */
+.btn:focus { box-shadow: 0 0 0 .25rem var(--ring); } /* alone focus bottoni */
+
+/* ---------- Badges / tables ---------- */
+.badge-soft { background: rgb(18 50 223 / 0.12); color: var(--brand-dark); font-weight: 600; } /* badge tipo quello sopra il titolo in home */
+.table thead th { color: var(--muted); text-transform: uppercase; font-size: .72rem; letter-spacing: .06em; }
+.table > :not(caption) > * > * { padding: .9rem .75rem; }
+
+/* ---------- Form ---------- */
+.form-control, .form-select { border-radius: 12px; padding: .7rem .9rem; }
+.form-control:focus, .form-select:focus { border-color: var(--brand); box-shadow: 0 0 0 .25rem var(--ring); } /* focus campi form */
+.form-label { font-weight: 600; color: var(--ink); } /* label form */
+
+/* ---------- Misc ---------- */
+.section-title { font-weight: 800; letter-spacing: -.02em; }
+.text-brand { color: var(--brand-dark) !important; } /* per colorare un testo col blu brand */
+.dot { width: 14px; height: 14px; border-radius: 50%; display: inline-block; border: 2px solid rgba(2,6,23,.15); } /* pallino tipo indicatore stato */
+footer.siw-footer { color: var(--muted); } /* testo footer */
+a { color: var(--brand-dark); } /* colore link di base */

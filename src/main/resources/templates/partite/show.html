@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Dettaglio partita')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container">
+    <a th:href="@{/partite}" class="btn btn-outline-brand btn-sm mb-3">← Calendario</a>
+
+    <!-- Scheda partita -->
+    <div class="card card-soft p-4 mb-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+            <span class="badge badge-soft" th:text="${partita.torneo != null ? partita.torneo.nome : ''}"></span>
+            <span class="badge" th:classappend="${partita.stato == 'TERMINATA'} ? 'text-bg-secondary' : 'text-bg-warning'"
+                  th:text="${partita.stato}"></span>
+        </div>
+        <div class="row align-items-center text-center">
+            <div class="col-5">
+                <span class="dot mb-2" th:style="'width:34px;height:34px;background-color:' + (${partita.squadraCasa != null ? partita.squadraCasa.coloreMaglia : '#ccc'})"></span>
+                <h4 class="mb-0" th:text="${partita.squadraCasa != null ? partita.squadraCasa.nome : '-'}"></h4>
+            </div>
+            <div class="col-2">
+                <div class="display-6 fw-bold"
+                     th:text="(${partita.goalsHome != null ? partita.goalsHome : '-'}) + ' : ' + (${partita.goalsAway != null ? partita.goalsAway : '-'})"></div>
+            </div>
+            <div class="col-5">
+                <span class="dot mb-2" th:style="'width:34px;height:34px;background-color:' + (${partita.squadraTrasferta != null ? partita.squadraTrasferta.coloreMaglia : '#ccc'})"></span>
+                <h4 class="mb-0" th:text="${partita.squadraTrasferta != null ? partita.squadraTrasferta.nome : '-'}"></h4>
+            </div>
+        </div>
+        <hr>
+        <div class="d-flex justify-content-center gap-4 text-muted small flex-wrap">
+            <span><i class="bi bi-clock me-1"></i><span th:text="${#temporals.format(partita.dataOra, 'dd/MM/yyyy HH:mm')}"></span></span>
+            <span><i class="bi bi-geo-alt me-1"></i><span th:text="${partita.luogo}"></span></span>
+            <span th:if="${partita.arbitro != null}"><i class="bi bi-person-badge me-1"></i><span th:text="${partita.arbitro.nome + ' ' + partita.arbitro.cognome}"></span></span>
+        </div>
+    </div>
+
+    <!-- Commenti -->
+    <div class="card card-soft p-4">
+        <h2 class="section-title h5 mb-3"><i class="bi bi-chat-dots text-brand me-2"></i>Commenti</h2>
+
+        <div th:if="${erroreCommento}" class="alert alert-danger rounded-4" th:text="${erroreCommento}"></div>
+
+        <!-- Form nuovo commento: solo utenti autenticati -->
+        <div sec:authorize="isAuthenticated()" class="mb-4">
+            <form th:action="@{'/partita/' + ${partita.id} + '/commento'}" th:object="${commento}" method="post">
+                <div class="mb-2">
+                    <textarea class="form-control" th:field="*{testo}" rows="2"
+                              placeholder="Scrivi un commento..."></textarea>
+                    <div class="text-danger small mt-1" th:if="${#fields.hasErrors('testo')}" th:errors="*{testo}"></div>
+                </div>
+                <div class="text-end">
+                    <button class="btn btn-brand btn-sm" type="submit"><i class="bi bi-send me-1"></i>Pubblica</button>
+                </div>
+            </form>
+        </div>
+        <div sec:authorize="!isAuthenticated()" class="alert alert-light border rounded-4">
+            <a th:href="@{/login}">Accedi</a> o <a th:href="@{/register}">registrati</a> per lasciare un commento.
+        </div>
+
+        <!-- Elenco commenti -->
+        <div th:each="c : ${commenti}" class="border-top py-3">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <span class="fw-semibold"><i class="bi bi-person-circle me-1 text-brand"></i>
+                        <span th:text="${c.autore != null ? c.autore.username : 'anonimo'}"></span></span>
+                    <span class="text-muted small ms-2" th:text="${#temporals.format(c.dataCreazione, 'dd/MM/yyyy HH:mm')}"></span>
+                    <p class="mb-0 mt-1" th:text="${c.testo}"></p>
+                </div>
+                <!-- Azioni sui propri commenti: modifica + elimina -->
+                <div th:if="${usernameCorrente != null and c.autore != null and c.autore.username == usernameCorrente}"
+                     class="d-flex gap-1">
+                    <a th:href="@{'/commento/' + ${c.id} + '/edit'}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-pencil"></i></a>
+                    <form th:action="@{'/commento/' + ${c.id} + '/delete'}" method="post" class="m-0">
+                        <button class="btn btn-outline-danger btn-sm" type="submit" onclick="return confirm('Eliminare il commento?')">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+                </div>
+                <!-- ADMIN: può eliminare anche i commenti altrui -->
+                <div sec:authorize="hasRole('ADMIN')"
+                     th:if="${usernameCorrente == null or c.autore == null or c.autore.username != usernameCorrente}"
+                     class="d-flex gap-1">
+                    <form th:action="@{'/commento/' + ${c.id} + '/delete'}" method="post" class="m-0">
+                        <button class="btn btn-outline-danger btn-sm" type="submit" onclick="return confirm('Eliminare il commento (come admin)?')">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <p th:if="${#lists.isEmpty(commenti)}" class="text-muted mb-0">Nessun commento. Sii il primo a commentare!</p>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

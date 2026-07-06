@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Accedi')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card card-soft p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <span class="brand-badge d-inline-flex" style="width:52px;height:52px;font-size:1.5rem"><i class="bi bi-shield-lock"></i></span>
+                    <h1 class="section-title h4 mt-3 mb-1">Bentornato</h1>
+                    <p class="text-muted small mb-0">Accedi per commentare le partite</p>
+                </div>
+
+                <div th:if="${param.error}" class="alert alert-danger py-2 small rounded-4">Username o password non validi.</div>
+                <div th:if="${param.logout}" class="alert alert-success py-2 small rounded-4">Sei uscito con successo.</div>
+                <div th:if="${param.registered}" class="alert alert-success py-2 small rounded-4">Registrazione completata, ora puoi accedere.</div>
+
+                <form th:action="@{/login}" method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-control" name="username" required autofocus>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" name="password" required>
+                    </div>
+                    <button class="btn btn-brand w-100 py-2 fw-bold" type="submit">Accedi</button>
+                </form>
+
+                <div class="text-center mt-4 pt-3 border-top">
+                    <span class="small text-muted">Non hai un account?</span>
+                    <a th:href="@{/register}" class="fw-bold text-decoration-none">Registrati</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

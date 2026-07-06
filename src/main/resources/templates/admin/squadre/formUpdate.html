@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Modifica squadra')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-6">
+            <div class="card card-soft p-4">
+                <h1 class="section-title h4 mb-4"><i class="bi bi-pencil-square text-brand me-2"></i>Modifica squadra</h1>
+                <form th:action="@{/admin/updateSquadra}" th:object="${squadra}" method="post" enctype="multipart/form-data">
+                    <input type="hidden" th:field="*{id}">
+                    <input type="hidden" th:field="*{immagine}">
+                    <div class="mb-3">
+                        <div th:if="${squadra.immagine}" class="mb-2">
+                            <img th:src="${#strings.startsWith(squadra.immagine, 'http') ? squadra.immagine : '/uploads/' + squadra.immagine}"
+                                 alt="Logo squadra" style="height:80px;width:80px;object-fit:cover;border-radius:12px">
+                        </div>
+                        <label class="form-label">Logo (lascia vuoto per non modificarlo)</label>
+                        <input type="file" name="immagineFile" class="form-control" accept="image/*">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Nome squadra</label>
+                        <input type="text" class="form-control" th:field="*{nome}">
+                        <div class="text-danger small mt-1" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></div>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-8">
+                            <label class="form-label">Città</label>
+                            <input type="text" class="form-control" th:field="*{citta}">
+                            <div class="text-danger small mt-1" th:if="${#fields.hasErrors('citta')}" th:errors="*{citta}"></div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Fondazione</label>
+                            <input type="number" class="form-control" th:field="*{annoFondazione}">
+                            <div class="text-danger small mt-1" th:if="${#fields.hasErrors('annoFondazione')}" th:errors="*{annoFondazione}"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Colore maglia</label>
+                        <input type="color" class="form-control form-control-color" th:field="*{coloreMaglia}">
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Tornei a cui partecipa</label>
+                        <select class="form-select" th:field="*{tornei}" multiple style="height:110px">
+                            <option th:each="t : ${tornei}" th:value="${t.id}" th:text="${t.nome}"></option>
+                        </select>
+                        <small class="text-muted">Ctrl+Click per selezione multipla.</small>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-brand">Salva modifiche</button>
+                        <a th:href="@{/squadre}" class="btn btn-outline-secondary">Annulla</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

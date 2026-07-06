@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Tornei')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="section-title h3 mb-0"><i class="bi bi-trophy text-brand me-2"></i>Tornei</h1>
+        <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/formNewTorneo}" class="btn btn-brand">
+            <i class="bi bi-plus-lg me-1"></i>Nuovo torneo
+        </a>
+    </div>
+
+    <div class="card card-soft">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Anno</th>
+                    <th>Descrizione</th>
+                    <th class="text-end">Azioni</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="torneo : ${tornei}">
+                    <td class="fw-semibold">
+                        <a th:href="@{'/torneo/' + ${torneo.id}}" class="text-decoration-none" th:text="${torneo.nome}"></a>
+                    </td>
+                    <td><span class="badge badge-soft" th:text="${torneo.anno}"></span></td>
+                    <td class="text-muted small" th:text="${torneo.descrizione}"></td>
+                    <td class="text-end">
+                        <a th:href="@{'/torneo/' + ${torneo.id}}" class="btn btn-outline-brand btn-sm">Dettaglio</a>
+                        <a th:href="@{'/torneo/' + ${torneo.id} + '/classifica-react'}" class="btn btn-outline-secondary btn-sm">
+                            <i class="bi bi-cpu"></i> Classifica
+                        </a>
+                        <span sec:authorize="hasRole('ADMIN')">
+                            <a th:href="@{'/admin/formUpdateTorneo/' + ${torneo.id}}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-pencil"></i></a>
+                            <a th:href="@{'/admin/deleteTorneo/' + ${torneo.id}}" class="btn btn-outline-danger btn-sm"
+                               onclick="return confirm('Eliminare questo torneo?')"><i class="bi bi-trash"></i></a>
+                        </span>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(tornei)}">
+                    <td colspan="4" class="text-center text-muted py-4">Nessun torneo presente.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

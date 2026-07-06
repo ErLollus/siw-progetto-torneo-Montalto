@@ -14,15 +14,24 @@ public class UtenteService {
     private UtenteRepository utenteRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    /**
+     * Registra un nuovo utente cifrando la password.
+     * @Transactional perché modifica lo stato del sistema.
+     */
     @Transactional
     public void save(Utente utente) {
         utente.setPassword(passwordEncoder.encode(utente.getPassword()));
         this.utenteRepository.save(utente);
     }
 
+    @Transactional(readOnly = true)
     public Utente findByUsername(String username) {
-        // Nota: Qui CrudRepository standard non ha findByUsername,
-        // lo aggiungeremo se servirà per il login, per ora lasciamo la base.
-        return null;
+        return this.utenteRepository.findByUsername(username).orElse(null);
+    }
+
+    @Transactional(readOnly = true)
+    public boolean existsByUsername(String username) {
+        return this.utenteRepository.existsByUsername(username);
     }
 }

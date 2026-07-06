@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Classifica live')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container">
+    <div id="root"></div>
+</main>
+
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<script type="text/babel">
+    const { useState, useEffect } = React;
+
+    function App() {
+        const [classifica, setClassifica] = useState([]);
+        const [caricamento, setCaricamento] = useState(true);
+        // ID del torneo dall'URL: /torneo/{id}/classifica-react
+        const torneoId = window.location.pathname.split('/')[2];
+
+        useEffect(() => {
+            fetch(`/api/classifica/${torneoId}`)
+                .then(res => res.json())
+                .then(data => { setClassifica(data); setCaricamento(false); })
+                .catch(err => { console.error("Errore nel caricamento:", err); setCaricamento(false); });
+        }, []);
+
+        if (caricamento) return (
+            <div className="text-center py-5">
+                <div className="spinner-border" style={{color: 'var(--brand-dark)'}} role="status"></div>
+                <p className="mt-2 text-muted">Caricamento dati in corso...</p>
+            </div>
+        );
+
+        return (
+            <div className="card card-soft">
+                <div className="d-flex justify-content-between align-items-center p-4 pb-0">
+                    <h1 className="section-title h4 mb-0"><i className="bi bi-cpu-fill text-brand me-2"></i>Classifica live</h1>
+                    <a href="/tornei" className="btn btn-outline-brand btn-sm">← Tornei</a>
+                </div>
+                <div className="table-responsive p-2">
+                    <table className="table table-hover text-center align-middle mb-0">
+                        <thead>
+                        <tr>
+                            <th className="text-start">Squadra</th>
+                            <th>PT</th><th>G</th><th>V</th><th>N</th><th>P</th><th>GF</th><th>GS</th><th>DR</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {classifica.map((s, i) => (
+                            <tr key={i}>
+                                <td className="text-start fw-semibold">
+                                    <a href={`/squadra/${s.id}`} style={{textDecoration: 'none'}}>{s.nome}</a>
+                                </td>
+                                <td><span className="badge badge-soft">{s.punti}</span></td>
+                                <td>{s.giocate}</td>
+                                <td className="text-success">{s.vittorie}</td>
+                                <td className="text-warning">{s.pareggi}</td>
+                                <td className="text-danger">{s.sconfitte}</td>
+                                <td>{s.golFatti}</td>
+                                <td>{s.golSubiti}</td>
+                                <td className={s.diffReti >= 0 ? "text-success" : "text-danger"}>
+                                    {s.diffReti > 0 ? `+${s.diffReti}` : s.diffReti}
+                                </td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                </div>
+                <div className="text-muted small text-center pb-3">Dati caricati via API REST da Spring Boot</div>
+            </div>
+        );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

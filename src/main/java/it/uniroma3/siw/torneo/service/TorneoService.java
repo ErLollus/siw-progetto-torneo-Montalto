@@ -28,16 +28,21 @@ public class TorneoService {
         this.torneoRepository.save(torneo);
     }
 
+    @Transactional(readOnly = true)
     public Torneo findById(Long id) {
         return this.torneoRepository.findById(id).orElse(null);
     }
 
+    @Transactional(readOnly = true)
     public List<Torneo> findAll() {
         List<Torneo> tornei = new ArrayList<>();
         this.torneoRepository.findAll().forEach(tornei::add);
         return tornei;
     }
-
+    @Transactional(readOnly = true)
+    public long count() {
+        return this.torneoRepository.count();
+    }
     @Transactional
     public void deleteById(Long id) {
         Torneo torneo = this.torneoRepository.findById(id).orElse(null);
@@ -58,6 +63,12 @@ public class TorneoService {
         }
 
     }
+    /**
+     * Calcolo della classifica di un torneo: operazione di sola lettura che
+     * naviga le associazioni squadre/partite del torneo. Isolamento di default
+     * (READ_COMMITTED) sufficiente per una lettura non critica.
+     */
+    @Transactional(readOnly = true)
     public List<SquadraClassifica> calcolaClassifica(Long torneoId) {
         Torneo torneo = this.torneoRepository.findById(torneoId).orElse(null);
         if (torneo == null) return new ArrayList<>();
@@ -71,9 +82,6 @@ public class TorneoService {
 
         // Calcoliamo i punti
         for (Partita p : torneo.getPartite()) {
-            // Log di debug per vedere cosa succede in console
-            System.out.println("Partita " + p.getId() + " - Stato: " + p.getStato() + " - Risultato: " + p.getGoalsHome() + "-" + p.getGoalsAway());
-
             // Usiamo equalsIgnoreCase per evitare errori tra "terminata" e "TERMINATA"
             if (p.getStato() != null && p.getStato().equalsIgnoreCase("TERMINATA")) {
 

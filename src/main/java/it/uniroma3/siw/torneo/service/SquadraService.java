@@ -24,14 +24,29 @@ public class SquadraService {
         this.squadraRepository.save(squadra);
     }
 
+    @Transactional(readOnly = true)
     public Squadra findById(Long id) {
         return this.squadraRepository.findById(id).orElse(null);
     }
 
+    @Transactional(readOnly = true)
     public List<Squadra> findAll() {
         List<Squadra> squadre = new ArrayList<>();
         this.squadraRepository.findAll().forEach(squadre::add);
         return squadre;
+    }
+    @Transactional(readOnly = true)
+    public List<Squadra> orderByNomeAsc() {
+        return this.squadraRepository.orderByNomeAsc();
+    }
+    @Transactional(readOnly = true)
+    public long count() {
+        return this.squadraRepository.count();
+    }
+    @Transactional(readOnly = true)
+    public List<Squadra> cerca(String q){
+        if(q==null || q.isBlank()) return findAll();
+        return this.squadraRepository.findByNomeContainingIgnoreCaseOrCittaContainingIgnoreCase(q,q);
     }
     @Transactional
     public void deleteById(Long id) {

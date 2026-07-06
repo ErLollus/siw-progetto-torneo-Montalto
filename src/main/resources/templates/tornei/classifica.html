@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Classifica')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="section-title h3 mb-0">Classifica · <span th:text="${torneo.nome}"></span></h1>
+        <a th:href="@{'/torneo/' + ${torneo.id}}" class="btn btn-outline-brand btn-sm">← Dettaglio torneo</a>
+    </div>
+
+    <div class="card card-soft">
+        <div class="table-responsive">
+            <table class="table table-hover text-center align-middle mb-0">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th class="text-start">Squadra</th>
+                    <th>PT</th><th>G</th><th>V</th><th>N</th><th>P</th><th>GF</th><th>GS</th><th>DR</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="s, iter : ${classifica}">
+                    <td class="fw-bold" th:text="${iter.count}"></td>
+                    <td class="text-start fw-semibold" th:text="${s.nome}"></td>
+                    <td><span class="badge badge-soft" th:text="${s.punti}"></span></td>
+                    <td th:text="${s.giocate}"></td>
+                    <td class="text-success" th:text="${s.vittorie}"></td>
+                    <td class="text-warning" th:text="${s.pareggi}"></td>
+                    <td class="text-danger" th:text="${s.sconfitte}"></td>
+                    <td th:text="${s.golFatti}"></td>
+                    <td th:text="${s.golSubiti}"></td>
+                    <td th:text="${s.diffReti}"></td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(classifica)}">
+                    <td colspan="10" class="text-muted py-4">Nessuna squadra iscritta.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

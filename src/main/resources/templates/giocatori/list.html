@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Giocatori')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="section-title h3 mb-0"><i class="bi bi-people text-brand me-2"></i>Giocatori</h1>
+        <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/formNewGiocatore}" class="btn btn-brand">
+            <i class="bi bi-plus-lg me-1"></i>Nuovo giocatore
+        </a>
+    </div>
+    <form th:action="@{/giocatori}" method="get" class="d-flex gap-2 mb-3">
+        <input type="text" name="q" th:value="${q}" class="form-control"placeholder="Cerca per cognome...">
+        <span th:if="${giocatori.size() > 0}" class="text-muted small mb-0">Trovati <span th:text="${giocatori.size()}"></span> giocatori</span>
+        <p th:if="${giocatori.size() == 0}" class="text-muted small mb-0">Nessun giocatore trovato</p>
+        <a th:href="@{/giocatori(q=${q}, ordina=${ordina} ? false : true)}" class="btn btn-outline-brand">
+            <i class="bi bi-sort-alpha-down"></i> Ordina per cognome
+        </a>
+        
+
+        <button class="btn btn-outline-brand" type="submit"><i class="bi bi-search"></i></button>
+        <a th:href="@{/giocatori}" class="btn btn-outline-secondary">Azzera</a>
+    </form>
+    <div class="card card-soft">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>Nome e cognome</th>
+                    <th>Nascita</th>
+                    <th>Ruolo</th>
+                    <th>Altezza</th>
+                    <th>Squadra</th>
+                    <th sec:authorize="hasRole('ADMIN')" class="text-end">Azioni</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="giocatore : ${giocatori}">
+                    <td>
+                        <img th:if="${giocatore.immagine}"
+                             th:src="${#strings.startsWith(giocatore.immagine, 'http') ? giocatore.immagine : '/uploads/' + giocatore.immagine}"
+                             alt="Foto" style="height:36px;width:36px;object-fit:cover;border-radius:50%">
+                        <span th:unless="${giocatore.immagine}" class="icon-wrap" style="width:36px;height:36px;font-size:1rem;background:rgba(2,132,199,.12);color:#0284c7">
+                            <i class="bi bi-person"></i>
+                        </span>
+                    </td>
+                    <td class="fw-semibold" th:text="${giocatore.nome + ' ' + giocatore.cognome}"></td>
+                    <td class="small text-muted" th:text="${#temporals.format(giocatore.dataNascita, 'dd/MM/yyyy')}"></td>
+                    <td><span class="badge badge-soft" th:text="${giocatore.ruolo}"></span></td>
+                    <td th:text="${giocatore.altezza + ' cm'}"></td>
+                    <td>
+                        <a th:if="${giocatore.squadra != null}" th:href="@{'/squadra/' + ${giocatore.squadra.id}}"
+                           class="text-decoration-none" th:text="${giocatore.squadra.nome}"></a>
+                        <span th:unless="${giocatore.squadra != null}" class="text-muted small">Svincolato</span>
+                    </td>
+                    <td sec:authorize="hasRole('ADMIN')" class="text-end">
+                        <a th:href="@{'/admin/formUpdateGiocatore/' + ${giocatore.id}}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-pencil"></i></a>
+                        <a th:href="@{'/admin/deleteGiocatore/' + ${giocatore.id}}" class="btn btn-outline-danger btn-sm"
+                           onclick="return confirm('Eliminare?')"><i class="bi bi-trash"></i></a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(giocatori)}">
+                    <td colspan="7" class="text-center text-muted py-4">Nessun giocatore presente.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

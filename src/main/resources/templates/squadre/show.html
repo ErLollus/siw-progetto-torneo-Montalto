@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head(${squadra.nome})}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container">
+    <div class="card card-soft p-4 mb-4">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+            <div class="d-flex align-items-center gap-3">
+                <img th:if="${squadra.immagine}"
+                     th:src="${#strings.startsWith(squadra.immagine, 'http') ? squadra.immagine : '/uploads/' + squadra.immagine}"
+                     alt="Logo" style="width:42px;height:42px;object-fit:cover;border-radius:10px">
+                <span th:unless="${squadra.immagine}" class="dot" th:style="'width:42px;height:42px;background-color:' + (${squadra.coloreMaglia} ?: '#cccccc')"></span>
+                <div>
+                    <h1 class="section-title h3 mb-1" th:text="${squadra.nome}">Squadra</h1>
+                    <span class="badge badge-soft me-1" th:text="'Fondata nel ' + ${squadra.annoFondazione}"></span>
+                    <span class="badge badge-soft" th:text="${squadra.citta}"></span>
+                </div>
+            </div>
+            <a th:href="@{/squadre}" class="btn btn-outline-brand btn-sm">← Tutte le squadre</a>
+        </div>
+    </div>
+
+    <h2 class="section-title h5 mb-3">Rosa giocatori</h2>
+    <div class="row g-3">
+        <div th:each="giocatore : ${giocatori}" class="col-md-6 col-lg-4">
+            <div class="card card-soft h-100 p-3">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <img th:if="${giocatore.immagine}"
+                         th:src="${#strings.startsWith(giocatore.immagine, 'http') ? giocatore.immagine : '/uploads/' + giocatore.immagine}"
+                         alt="Foto" style="width:40px;height:40px;object-fit:cover;border-radius:50%">
+                    <span th:unless="${giocatore.immagine}" class="icon-wrap" style="width:40px;height:40px;font-size:1.1rem;background:rgba(16,185,129,.12);color:var(--brand-dark)">
+                        <i class="bi bi-person"></i>
+                    </span>
+                    <h6 class="mb-0" th:text="${giocatore.nome} + ' ' + ${giocatore.cognome}">Nome</h6>
+                </div>
+                <div class="small text-muted">
+                    <div><strong>Ruolo:</strong> <span th:text="${giocatore.ruolo}"></span></div>
+                    <div><strong>Altezza:</strong> <span th:text="${giocatore.altezza} + ' cm'"></span></div>
+                    <div><strong>Nascita:</strong> <span th:text="${#temporals.format(giocatore.dataNascita, 'dd/MM/yyyy')}"></span></div>
+                </div>
+            </div>
+        </div>
+        <div th:if="${#lists.isEmpty(giocatori)}" class="col-12">
+            <div class="alert alert-warning rounded-4">Non ci sono ancora giocatori registrati per questa squadra.</div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

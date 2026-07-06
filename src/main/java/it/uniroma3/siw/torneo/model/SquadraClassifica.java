@@ -33,7 +33,7 @@ public class SquadraClassifica {
         }
     }
 
-    // Genera Getter per tutti i campi (necessari per Thymeleaf)
+    // getter per tutti i campi, mi servono perché Thymeleaf ci accede tramite questi
     public String getNome() { return nome; }
     public int getPunti() { return punti; }
     public int getGiocate() { return giocate; }

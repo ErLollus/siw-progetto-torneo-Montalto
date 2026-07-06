@@ -8,8 +8,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import java.nio.file.Paths;
 
 /**
- * Espone la cartella di upload (immagini di giocatori e squadre) come
- * risorse statiche raggiungibili all'URL /uploads/**.
+ * Serve per far vedere le immagini caricate (giocatori e squadre): rendo
+ * raggiungibile la cartella di upload dall'URL /uploads/**, altrimenti il
+ * browser non riuscirebbe a caricarle.
  */
 @Configuration
 public class WebConfig implements WebMvcConfigurer {

@@ -18,14 +18,19 @@
     function App() {
         const [classifica, setClassifica] = useState([]);
         const [caricamento, setCaricamento] = useState(true);
-        // ID del torneo dall'URL: /torneo/{id}/classifica-react
+        const [errore, setErrore] = useState(null);
+        // prendo l'id del torneo direttamente dall'URL (tipo /torneo/5/classifica-react)
         const torneoId = window.location.pathname.split('/')[2];
 
         useEffect(() => {
             fetch(`/api/classifica/${torneoId}`)
                 .then(res => res.json())
                 .then(data => { setClassifica(data); setCaricamento(false); })
-                .catch(err => { console.error("Errore nel caricamento:", err); setCaricamento(false); });
+                .catch(err => {
+                    console.error("Errore nel caricamento:", err);
+                    setErrore("Impossibile caricare la classifica. Riprova più tardi.");
+                    setCaricamento(false);
+                });
         }, []);
 
         if (caricamento) return (
@@ -35,10 +40,14 @@
             </div>
         );
 
+        if (errore) return (
+            <div className="alert alert-danger">{errore}</div>
+        );
+
         return (
             <div className="card card-soft">
-                <div className="d-flex justify-content-between align-items-center p-4 pb-0">
-                    <h1 className="section-title h4 mb-0"><i className="bi bi-cpu-fill text-brand me-2"></i>Classifica live</h1>
+                <div className="d-flex justify-content-between align-items-center p-4 pb-0 flex-wrap gap-2">
+                    <h1 className="section-title h4 mb-0"><i className="bi bi-cpu-fill text-brand me-2"></i>Classifica(react)</h1>
                     <a href="/tornei" className="btn btn-outline-brand btn-sm">← Tornei</a>
                 </div>
                 <div className="table-responsive p-2">
@@ -50,23 +59,31 @@
                         </tr>
                         </thead>
                         <tbody>
-                        {classifica.map((s, i) => (
-                            <tr key={i}>
-                                <td className="text-start fw-semibold">
-                                    <a href={`/squadra/${s.id}`} style={{textDecoration: 'none'}}>{s.nome}</a>
-                                </td>
-                                <td><span className="badge badge-soft">{s.punti}</span></td>
-                                <td>{s.giocate}</td>
-                                <td className="text-success">{s.vittorie}</td>
-                                <td className="text-warning">{s.pareggi}</td>
-                                <td className="text-danger">{s.sconfitte}</td>
-                                <td>{s.golFatti}</td>
-                                <td>{s.golSubiti}</td>
-                                <td className={s.diffReti >= 0 ? "text-success" : "text-danger"}>
-                                    {s.diffReti > 0 ? `+${s.diffReti}` : s.diffReti}
+                        {classifica.length === 0 ? (
+                            <tr>
+                                <td colSpan="9" className="text-muted py-4">
+                                    Nessuna squadra iscritta a questo torneo.
                                 </td>
                             </tr>
-                        ))}
+                        ) : (
+                            classifica.map((s, i) => (
+                                <tr key={s.id}>
+                                    <td className={i < 3 ? "table-warning" : ""}>
+                                        <a href={`/squadra/${s.id}`} style={{textDecoration: 'none'}}>{s.nome}</a>
+                                    </td>
+                                    <td><span className="badge badge-soft">{s.punti}</span></td>
+                                    <td>{s.giocate}</td>
+                                    <td className="text-success">{s.vittorie}</td>
+                                    <td className="text-warning">{s.pareggi}</td>
+                                    <td className="text-danger">{s.sconfitte}</td>
+                                    <td>{s.golFatti}</td>
+                                    <td>{s.golSubiti}</td>
+                                    <td className={s.diffReti >= 0 ? "text-success" : "text-danger"}>
+                                        {s.diffReti > 0 ? `+${s.diffReti}` : s.diffReti}
+                                    </td>
+                                </tr>
+                            ))
+                        )}
                         </tbody>
                     </table>
                 </div>

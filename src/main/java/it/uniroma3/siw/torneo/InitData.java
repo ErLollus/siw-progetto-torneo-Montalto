@@ -10,10 +10,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 /**
- * Popolamento iniziale del database (eseguito solo se vuoto).
- * Crea utenti (admin + user), tornei, squadre, giocatori, arbitri, partite con
- * risultati e un commento di esempio, così da poter dimostrare tutti i casi
- * d'uso richiesti dal PDF.
+ * Classe che riempie il database con dei dati finti all'avvio, ma solo se è
+ * vuoto (altrimenti ogni volta che riavvio l'app mi ritrovo i doppioni).
+ * Creo un admin e uno user di prova, un torneo con le squadre, i giocatori,
+ * gli arbitri, qualche partita già giocata (con risultato) e una ancora da
+ * giocare, più un commento di esempio. Mi serve per non dover reinserire
+ * tutto a mano ogni volta che provo l'app o preparo l'esame.
  */
 @Component
 public class InitData implements CommandLineRunner {
@@ -47,14 +49,14 @@ public class InitData implements CommandLineRunner {
         }
         System.out.println("--- DB vuoto: inserimento dati iniziali ---");
 
-        // --- UTENTI ---
+        // creo gli utenti di prova
         if (!utenteService.existsByUsername("admin")) {
             Utente admin = new Utente();
             admin.setNome("Amministratore");
             admin.setCognome("Sistema");
             admin.setUsername("admin");
-            admin.setPassword("admin");   // verrà cifrata dal service
-            admin.setRuolo("ADMIN");
+            admin.setPassword("admin");   // tanto ci pensa il service a cifrarla con BCrypt
+            admin.setRuolo(Ruolo.ADMIN);
             utenteService.save(admin);
         }
         if (!utenteService.existsByUsername("user")) {
@@ -63,24 +65,24 @@ public class InitData implements CommandLineRunner {
             user.setCognome("Rossi");
             user.setUsername("user");
             user.setPassword("user");
-            user.setRuolo("USER");
+            user.setRuolo(Ruolo.USER);
             utenteService.save(user);
         }
 
-        // --- TORNEO ---
+        // creo il torneo di prova
         Torneo champions = new Torneo();
         champions.setNome("Champions League Roma 3");
         champions.setAnno(2026);
         champions.setDescrizione("Torneo universitario amatoriale di calcio a 11.");
         torneoService.saveTorneo(champions);
 
-        // --- SQUADRE ---
+        // creo le squadre
         Squadra roma3 = creaSquadra("A.S. Roma 3", "Roma", 2020, "#8E1F2F", champions);
         Squadra ingegneria = creaSquadra("Ingegneria FC", "Roma", 2018, "#1E5AA8", champions);
         Squadra scienze = creaSquadra("Scienze United", "Roma", 2019, "#2E7D32", champions);
         Squadra lettere = creaSquadra("Lettere City", "Roma", 2021, "#F9A825", champions);
 
-        // --- GIOCATORI ---
+        // aggiungo qualche giocatore per ogni squadra
         creaGiocatore("Francesco", "Totti", "Attaccante", 180, LocalDate.of(1976, 9, 27), roma3);
         creaGiocatore("Daniele", "De Rossi", "Centrocampista", 184, LocalDate.of(1983, 7, 24), roma3);
         creaGiocatore("Alessandro", "Bianchi", "Portiere", 188, LocalDate.of(1999, 3, 12), ingegneria);
@@ -88,21 +90,21 @@ public class InitData implements CommandLineRunner {
         creaGiocatore("Marco", "Neri", "Attaccante", 179, LocalDate.of(1998, 11, 30), scienze);
         creaGiocatore("Giovanni", "Gialli", "Centrocampista", 176, LocalDate.of(2001, 6, 18), lettere);
 
-        // --- ARBITRI ---
+        // e un paio di arbitri
         Arbitro arbitro1 = creaArbitro("Pierluigi", "Collina", "ARB-001");
         Arbitro arbitro2 = creaArbitro("Nicola", "Rizzoli", "ARB-002");
 
-        // --- PARTITE ---
+        // partite: alcune già giocate con risultato, una ancora da giocare
         Partita p1 = creaPartita(champions, roma3, ingegneria, arbitro1,
-                LocalDateTime.now().minusDays(7), "Stadio Roma 3", 3, 1, "TERMINATA");
+                LocalDateTime.now().minusDays(7), "Stadio Roma 3", 3, 1, StatoPartita.TERMINATA);
         creaPartita(champions, scienze, lettere, arbitro2,
-                LocalDateTime.now().minusDays(6), "Campo Scienze", 2, 2, "TERMINATA");
+                LocalDateTime.now().minusDays(6), "Campo Scienze", 2, 2, StatoPartita.TERMINATA);
         creaPartita(champions, roma3, scienze, arbitro1,
-                LocalDateTime.now().minusDays(3), "Stadio Roma 3", 1, 0, "TERMINATA");
+                LocalDateTime.now().minusDays(3), "Stadio Roma 3", 1, 0, StatoPartita.TERMINATA);
         creaPartita(champions, ingegneria, lettere, arbitro2,
-                LocalDateTime.now().plusDays(3), "Campo Ingegneria", null, null, "PROGRAMMATA");
+                LocalDateTime.now().plusDays(3), "Campo Ingegneria", null, null, StatoPartita.PROGRAMMATA);
 
-        // --- COMMENTO DI ESEMPIO ---
+        // aggiungo un commento finto tanto per far vedere che funziona
         Utente user = utenteService.findByUsername("user");
         if (user != null && p1 != null) {
             Commento c = new Commento();
@@ -148,7 +150,7 @@ public class InitData implements CommandLineRunner {
 
     private Partita creaPartita(Torneo torneo, Squadra casa, Squadra trasferta, Arbitro arbitro,
                                 LocalDateTime dataOra, String luogo, Integer golCasa, Integer golTrasferta,
-                                String stato) {
+                                StatoPartita stato) {
         Partita p = new Partita();
         p.setTorneo(torneo);
         p.setSquadraCasa(casa);

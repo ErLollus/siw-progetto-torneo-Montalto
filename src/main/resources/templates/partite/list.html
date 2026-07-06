@@ -31,7 +31,7 @@
                     <td class="small text-muted" th:text="${#temporals.format(partita.dataOra, 'dd/MM HH:mm')}"></td>
                     <td>
                         <span class="badge"
-                              th:classappend="${partita.stato == 'TERMINATA'} ? 'badge-soft' : 'text-bg-warning'"
+                              th:classappend="${partita.stato != null and partita.stato.name() == 'TERMINATA'} ? 'badge-soft' : 'text-bg-warning'"
                               th:text="${partita.stato}"></span>
                     </td>
                     <td class="text-center">

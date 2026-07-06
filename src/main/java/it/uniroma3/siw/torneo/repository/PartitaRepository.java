@@ -12,22 +12,23 @@ public interface PartitaRepository extends CrudRepository<Partita, Long> {
     List<Partita> findByArbitro(Arbitro arbitro);
 
     // ==========================================================================
-    //  Metodi usati per l'analisi sperimentale sulle strategie di accesso ai
-    //  dati (Sezione 8 del PDF). Il caso d'uso è "visualizzazione del calendario
-    //  delle partite", che per ogni partita naviga verso torneo, squadra di
-    //  casa, squadra in trasferta e arbitro.
+    //  Da qui in giù ci sono i metodi che uso per l'analisi sull'N+1 chiesta
+    //  nella sezione 8 del PDF. Il caso d'uso che ho preso come esempio è il
+    //  calendario delle partite, dove per ogni partita servono torneo,
+    //  squadra di casa, squadra in trasferta e arbitro.
     // ==========================================================================
 
     /**
-     * STRATEGIA 1 — LAZY (default di CrudRepository.findAll()).
-     * Una query per le partite + una query per OGNI associazione navigata
-     * successivamente: è il classico problema N+1.
-     * (Usa findAll() ereditato — riportato qui solo come riferimento concettuale.)
+     * Strategia 1, quella LAZY: è semplicemente il findAll() ereditato da
+     * CrudRepository, senza query custom. La lascio scritta qui solo come
+     * promemoria: è la strategia "base" con cui confronto le altre due nel
+     * test, quella col problema N+1 (una query per le partite + una per
+     * ogni relazione che vado a leggere dopo).
      */
 
     /**
-     * STRATEGIA 2 — JOIN FETCH esplicito.
-     * Carica partite e tutte le associazioni in UNA sola query.
+     * Strategia 2: JOIN FETCH scritto a mano. Con questa carico la partita
+     * e tutte le sue relazioni con una query sola, invece delle N+1.
      */
     @Query("SELECT DISTINCT p FROM Partita p " +
             "LEFT JOIN FETCH p.torneo " +
@@ -37,8 +38,9 @@ public interface PartitaRepository extends CrudRepository<Partita, Long> {
     List<Partita> findAllWithDettagli();
 
     /**
-     * STRATEGIA 3 — EntityGraph.
-     * Stesso effetto del join fetch ma dichiarato in modo dichiarativo.
+     * Strategia 3: uguale alla precedente ma con @EntityGraph invece di
+     * scrivermi la query a mano. Il risultato dovrebbe essere lo stesso,
+     * solo dichiarato in un altro modo.
      */
     @EntityGraph(attributePaths = {"torneo", "squadraCasa", "squadraTrasferta", "arbitro"})
     @Query("SELECT p FROM Partita p")

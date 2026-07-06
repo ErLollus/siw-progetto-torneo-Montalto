@@ -25,7 +25,7 @@ public class SquadraController {
     @Autowired
     private FileStorageService fileStorageService;
 
-    // ELENCO GENERALE SQUADRE
+    // pagina con l'elenco di tutte le squadre (con la ricerca)
     @GetMapping("/squadre")
     public String getSquadre(@RequestParam(defaultValue = "") String q,Model model) {
         model.addAttribute("squadre",this.squadraService.count());
@@ -35,21 +35,20 @@ public class SquadraController {
         return "squadre/list.html";
     }
 
-    // --- AGGIUNTA: DETTAGLIO SQUADRA (LA ROSA) ---
-    // Questa è la parte richiesta per visualizzare i giocatori di una squadra
+    // dettaglio di una squadra con la rosa (i giocatori), richiesto dal PDF
     @GetMapping("/squadra/{id}")
     public String getSquadra(@PathVariable("id") Long id, Model model) {
         Squadra squadra = this.squadraService.findById(id);
         if (squadra != null) {
             model.addAttribute("squadra", squadra);
-            // Passiamo i giocatori legati a questa squadra
+            // passo alla vista anche i giocatori di questa squadra
             model.addAttribute("giocatori", squadra.getGiocatori());
             return "squadre/show.html";
         }
         return "redirect:/squadre";
     }
 
-    // --- ADMIN: CREAZIONE ---
+    // admin: creazione squadra
     @GetMapping("/admin/formNewSquadra")
     public String formNewSquadra(Model model) {
         model.addAttribute("squadra", new Squadra());
@@ -73,14 +72,14 @@ public class SquadraController {
         return "redirect:/squadre";
     }
 
-    // --- ADMIN: ELIMINAZIONE ---
+    // admin: eliminazione squadra
     @GetMapping("/admin/deleteSquadra/{id}")
     public String deleteSquadra(@PathVariable("id") Long id) {
         this.squadraService.deleteById(id);
         return "redirect:/squadre";
     }
 
-    // --- ADMIN: MODIFICA ---
+    // admin: modifica squadra
     @GetMapping("/admin/formUpdateSquadra/{id}")
     public String formUpdateSquadra(@PathVariable("id") Long id, Model model) {
         Squadra squadra = this.squadraService.findById(id);

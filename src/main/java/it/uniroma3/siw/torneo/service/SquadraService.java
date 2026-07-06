@@ -53,22 +53,21 @@ public class SquadraService {
         Squadra squadra = this.squadraRepository.findById(id).orElse(null);
 
         if (squadra != null) {
-            // 1. Trova tutti i giocatori che appartengono a questa squadra
-            // (Assumendo che in Giocatore ci sia un campo 'squadra')
+            // 1. prendo tutti i giocatori di questa squadra
+            // (Giocatore ha un campo 'squadra' che punta qui)
             List<Giocatore> giocatori = this.giocatoreRepository.findBySquadra(squadra);
 
             for (Giocatore g : giocatori) {
-                g.setSquadra(null); // Svincoliamo il giocatore
+                g.setSquadra(null); // tolgo il collegamento, il giocatore resta nel DB ma senza squadra
                 this.giocatoreRepository.save(g);
             }
 
-            // 2. Rimuovi la squadra dai tornei (gestione ManyToMany)
-            // Se hai la lista tornei nella squadra:
+            // 2. tolgo la squadra dai tornei a cui era iscritta (relazione ManyToMany)
             for (Torneo t : squadra.getTornei()) {
                 t.getSquadre().remove(squadra);
             }
 
-            // 3. Ora puoi eliminare la squadra in sicurezza
+            // 3. a questo punto posso cancellare la squadra senza rompere niente
             this.squadraRepository.delete(squadra);
         }
     }

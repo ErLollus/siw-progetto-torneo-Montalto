@@ -3,6 +3,7 @@ package it.uniroma3.siw.torneo;
 import it.uniroma3.siw.torneo.model.Arbitro;
 import it.uniroma3.siw.torneo.model.Partita;
 import it.uniroma3.siw.torneo.model.Squadra;
+import it.uniroma3.siw.torneo.model.StatoPartita;
 import it.uniroma3.siw.torneo.model.Torneo;
 import it.uniroma3.siw.torneo.repository.ArbitroRepository;
 import it.uniroma3.siw.torneo.repository.PartitaRepository;
@@ -14,7 +15,7 @@ import org.hibernate.stat.Statistics;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -24,20 +25,23 @@ import java.util.function.Supplier;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * ANALISI SPERIMENTALE SULLE STRATEGIE DI ACCESSO AI DATI (Sezione 8 del PDF).
+ * Qui provo a confrontare le diverse strategie di fetch viste a lezione,
+ * come chiesto nella sezione 8 del PDF del progetto (quella sulle
+ * prestazioni e l'accesso ai dati).
  *
- * Caso d'uso: "visualizzazione del calendario delle partite". Per ogni partita
- * la vista naviga verso torneo, squadra di casa, squadra in trasferta e arbitro.
+ * Il caso d'uso che ho scelto è il calendario delle partite: per ogni
+ * partita bisogna andare a prendere torneo, squadra casa, squadra
+ * trasferta e arbitro, quindi è perfetto per far vedere il problema N+1.
  *
- * Confrontiamo tre strategie:
- *   1) LAZY   : findAll() + navigazione delle associazioni -> problema N+1
- *   2) JOIN FETCH : un'unica query con LEFT JOIN FETCH
- *   3) ENTITY GRAPH : equivalente dichiarativo
+ * Provo 3 modi diversi di fare la stessa query:
+ *   1) LAZY normale (findAll + poi navigo le relazioni) -> qui nasce il problema N+1
+ *   2) una query con JOIN FETCH scritta a mano
+ *   3) la stessa cosa ma con @EntityGraph
  *
- * Misuriamo il NUMERO di statement SQL eseguiti (via Hibernate Statistics) e il
- * tempo di esecuzione. Il numero di query è la metrica più significativa per il
- * problema N+1: con la strategia LAZY cresce col numero di partite, con le altre
- * due resta costante (1 sola query).
+ * Per confrontarle conto quante query SQL vengono eseguite davvero (uso le
+ * Statistics di Hibernate) e quanto tempo ci mette. Il numero di query
+ * secondo me è il dato più chiaro: con LAZY aumenta all'aumentare delle
+ * partite, con le altre due resta sempre 1.
  */
 @DataJpaTest
 class NPlusUnoAnalysisTest {
@@ -87,7 +91,7 @@ class NPlusUnoAnalysisTest {
             p.setLuogo("Campo " + i);
             p.setGoalsHome(i % 4);
             p.setGoalsAway(i % 3);
-            p.setStato("TERMINATA");
+            p.setStato(StatoPartita.TERMINATA);
             partitaRepository.save(p);
         }
         entityManager.flush();
@@ -111,14 +115,15 @@ class NPlusUnoAnalysisTest {
         System.out.println("Query ENTITY GRAPH: " + queryGraph);
         System.out.println("=======================================================\n");
 
-        // Le strategie ottimizzate devono eseguire molte meno query della LAZY.
+        // mi aspetto che le due strategie ottimizzate facciano molte meno query rispetto a LAZY
         assertTrue(queryJoinFetch < queryLazy, "Il join fetch deve ridurre le query rispetto alla strategia LAZY");
         assertTrue(queryGraph < queryLazy, "L'EntityGraph deve ridurre le query rispetto alla strategia LAZY");
     }
 
     /**
-     * Esegue la strategia fornita, naviga TUTTE le associazioni (per forzare il
-     * caricamento lazy) e restituisce il numero di statement SQL eseguiti.
+     * Lancia la strategia passata come parametro e poi legge tutti i campi
+     * delle relazioni (così, se sono LAZY, le forzo a caricarsi davvero).
+     * Alla fine ritorna quante query SQL sono state eseguite in totale.
      */
     private long misura(String etichetta, Supplier<List<Partita>> strategia) {
         Session session = entityManager.unwrap(Session.class);
@@ -128,7 +133,7 @@ class NPlusUnoAnalysisTest {
 
         long inizio = System.nanoTime();
         List<Partita> partite = strategia.get();
-        // Navigazione delle associazioni: è qui che la strategia LAZY genera le query extra
+        // qui navigo le relazioni: con LAZY è proprio in questo punto che partono le query in più
         for (Partita p : partite) {
             if (p.getTorneo() != null) p.getTorneo().getNome();
             if (p.getSquadraCasa() != null) p.getSquadraCasa().getNome();

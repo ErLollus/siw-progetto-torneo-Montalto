@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController // Indica che questo controller restituisce dati (JSON), non viste HTML
+@RestController // qui non ritorno una view ma JSON puro, così lo può leggere React
 @RequestMapping("/api")
 public class ClassificaRestController {
 
@@ -16,7 +16,7 @@ public class ClassificaRestController {
 
     @GetMapping("/classifica/{id}")
     public List<SquadraClassifica> getClassificaData(@PathVariable("id") Long id) {
-        // Usiamo il metodo che abbiamo già testato e che funziona!
+        // riuso lo stesso metodo del service che uso già per la classifica in Thymeleaf
         return this.torneoService.calcolaClassifica(id);
     }
 }

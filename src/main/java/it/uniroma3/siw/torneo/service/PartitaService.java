@@ -27,8 +27,9 @@ public class PartitaService {
     }
 
     /**
-     * Calendario partite con TUTTE le associazioni caricate in un'unica query
-     * (join fetch): evita il problema delle N+1 query nella vista /partite.
+     * Ritorna il calendario partite con già tutte le relazioni caricate,
+     * usando il join fetch: mi serve per non incappare nel problema N+1
+     * quando la view /partite mostra squadra, torneo e arbitro di ogni match.
      */
     @Transactional(readOnly = true)
     public List<Partita> findAllConDettagli() {

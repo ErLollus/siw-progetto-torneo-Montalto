@@ -57,7 +57,10 @@ Arbitro, Utente, Commento (7).
 
 ### 9. Frontend
 - Thymeleaf modernizzato (layout condiviso, Bootstrap 5, tema personalizzato).
-- Parte in **React** mantenuta e restilizzata (classifica live via API REST).
+- Parte in **React** limitata alla classifica live (`tornei/classifica-react.html`),
+  che consuma l'API REST `/api/classifica/{id}`. È l'unica implementazione React
+  del progetto (rimosso un progetto Vite duplicato e mai integrato che esisteva
+  in `frontend/`).
 
 ### 11. Validazione e gestione errori
 - Bean Validation (`@NotBlank`, `@NotNull`, `@Past`, `@Min`/`@Max`…) su tutte le
@@ -68,6 +71,8 @@ Arbitro, Utente, Commento (7).
 - Aggiunti `spring-boot-starter-validation` e `H2` (scope test).
 
 ## Malfunzionamenti noti
-- Nessuno noto. La build non è stata eseguita nell'ambiente di preparazione
-  (mancava JDK 25/Maven): si consiglia una verifica con `./mvnw clean test`
-  su IntelliJ prima della consegna.
+- Nessuno noto. Build verificata con `mvn clean test` (JDK 25, Spring Boot
+  4.0.6): `BUILD SUCCESS`, 2/2 test passati (incluso `NPlusUnoAnalysisTest`).
+  Nota per chi ricompila: in Spring Boot 4 l'annotazione `@DataJpaTest` è stata
+  spostata nel package `org.springframework.boot.data.jpa.test.autoconfigure`
+  (prima era `org.springframework.boot.test.autoconfigure.orm.jpa`).

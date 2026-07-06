@@ -14,9 +14,10 @@ import java.util.List;
 public interface CommentoRepository extends CrudRepository<Commento, Long> {
 
     /**
-     * Commenti di una partita. Usa un EntityGraph per caricare in un colpo solo
-     * anche l'autore, evitando il problema delle N+1 query quando in vista
-     * mostriamo "commento di <username>".
+     * Prende i commenti di una partita. Ho aggiunto l'EntityGraph per
+     * caricare subito anche l'autore, altrimenti per stampare "commento
+     * di <username>" in vista Hibernate farebbe una query in più per ogni
+     * commento (il solito N+1).
      */
     @EntityGraph(attributePaths = {"autore"})
     List<Commento> findByPartitaOrderByDataCreazioneDesc(Partita partita);

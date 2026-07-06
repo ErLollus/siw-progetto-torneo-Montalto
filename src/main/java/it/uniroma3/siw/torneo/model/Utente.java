@@ -5,14 +5,14 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 @Entity
-@Table(name = "users") // Usiamo 'users' perché 'user' è parola riservata in SQL
+@Table(name = "users") // ho dovuto chiamarla "users" perché "user" è una parola riservata in SQL, altrimenti dava errore
 public class Utente {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    // --- NUOVI CAMPI AGGIUNTI ---
+    // campi che ho aggiunto dopo rispetto alla prima versione
     @NotBlank(message = "Il nome è obbligatorio")
     private String nome;
 
@@ -27,18 +27,17 @@ public class Utente {
     @Size(min = 4, message = "La password deve avere almeno 4 caratteri")
     private String password;
 
-    private String ruolo; // es. "ADMIN", "USER"
+    @Enumerated(EnumType.STRING)
+    private Ruolo ruolo;
 
-    // --- GETTER E SETTER ---
+    // getter e setter
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
-    // Getter e Setter per Nome
     public String getNome() { return nome; }
     public void setNome(String nome) { this.nome = nome; }
 
-    // Getter e Setter per Cognome
     public String getCognome() { return cognome; }
     public void setCognome(String cognome) { this.cognome = cognome; }
 
@@ -48,6 +47,6 @@ public class Utente {
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
 
-    public String getRuolo() { return ruolo; }
-    public void setRuolo(String ruolo) { this.ruolo = ruolo; }
+    public Ruolo getRuolo() { return ruolo; }
+    public void setRuolo(Ruolo ruolo) { this.ruolo = ruolo; }
 }

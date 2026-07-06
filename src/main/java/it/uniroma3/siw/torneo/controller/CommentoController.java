@@ -19,11 +19,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.security.Principal;
 
 /**
- * Gestisce le funzionalità per gli UTENTI REGISTRATI (Sezione 4.2 del PDF):
- *  - dettaglio partita con visualizzazione dei commenti
- *  - inserimento di un commento ad una partita
- *  - modifica / eliminazione dei PROPRI commenti (un utente non può toccare
- *    i commenti altrui)
+ * Controller per le funzionalità degli utenti registrati (sezione 4.2 del
+ * PDF): si vede il dettaglio di una partita con i commenti, se ne può
+ * aggiungere uno nuovo, e si possono modificare/cancellare SOLO i propri
+ * commenti (uno non deve poter toccare i commenti scritti da altri, l'ho
+ * controllato bene lato service e non solo nella view).
  */
 @Controller
 public class CommentoController {
@@ -36,8 +36,8 @@ public class CommentoController {
     private UtenteService utenteService;
 
     /**
-     * Dettaglio di una partita con l'elenco dei commenti e il form di
-     * inserimento (accessibile agli utenti registrati).
+     * Pagina di dettaglio di una partita, con la lista dei commenti e il
+     * form per aggiungerne uno (solo per chi ha fatto login).
      */
     @GetMapping("/partita/{id}")
     public String dettaglioPartita(@PathVariable("id") Long id, Model model, Principal principal) {
@@ -55,7 +55,7 @@ public class CommentoController {
     }
 
     /**
-     * Inserimento di un nuovo commento alla partita.
+     * Riceve il form e salva un nuovo commento sulla partita.
      */
     @PostMapping("/partita/{id}/commento")
     public String aggiungiCommento(@PathVariable("id") Long id,
@@ -68,7 +68,7 @@ public class CommentoController {
             return "redirect:/partite";
         }
         if (bindingResult.hasErrors()) {
-            // Ricarichiamo la pagina di dettaglio mostrando gli errori di validazione
+            // se ci sono errori di validazione ricarico la pagina di dettaglio mostrandoli
             model.addAttribute("partita", partita);
             model.addAttribute("commenti", this.commentoService.findByPartita(partita));
             model.addAttribute("usernameCorrente", principal.getName());
@@ -80,7 +80,7 @@ public class CommentoController {
     }
 
     /**
-     * Form di modifica di un proprio commento.
+     * Form per modificare un commento, ma solo se è mio.
      */
     @GetMapping("/commento/{id}/edit")
     public String formModificaCommento(@PathVariable("id") Long id, Model model,
@@ -98,7 +98,7 @@ public class CommentoController {
     }
 
     /**
-     * Salvataggio della modifica di un proprio commento.
+     * Salva la modifica di un commento (ricontrollo che sia mio).
      */
     @PostMapping("/commento/{id}/update")
     public String aggiornaCommento(@PathVariable("id") Long id,
@@ -123,8 +123,9 @@ public class CommentoController {
     }
 
     /**
-     * Eliminazione di un commento: consentita all'autore oppure, per qualunque
-     * commento, ad un utente con ruolo ADMIN.
+     * Cancella un commento: può farlo l'autore, oppure un ADMIN su
+     * qualsiasi commento (mi sembrava utile per moderare eventuali
+     * commenti fuori luogo).
      */
     @PostMapping("/commento/{id}/delete")
     public String eliminaCommento(@PathVariable("id") Long id, Authentication authentication, RedirectAttributes ra) {

@@ -16,8 +16,8 @@ public class UtenteService {
     private PasswordEncoder passwordEncoder;
 
     /**
-     * Registra un nuovo utente cifrando la password.
-     * @Transactional perché modifica lo stato del sistema.
+     * Salva un utente nuovo, cifrando prima la password con BCrypt.
+     * Ho messo @Transactional perché scrive sul database.
      */
     @Transactional
     public void save(Utente utente) {

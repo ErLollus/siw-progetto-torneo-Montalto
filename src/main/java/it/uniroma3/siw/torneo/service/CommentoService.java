@@ -28,7 +28,7 @@ public class CommentoService {
     }
 
     /**
-     * Crea un nuovo commento associandolo a partita e autore correnti.
+     * Crea un commento nuovo e lo collega alla partita e a chi lo ha scritto.
      */
     @Transactional
     public void crea(Commento commento, Partita partita, Utente autore) {
@@ -39,8 +39,9 @@ public class CommentoService {
     }
 
     /**
-     * Aggiorna il testo di un commento SOLO se l'utente richiedente ne è l'autore.
-     * Restituisce true se l'aggiornamento è avvenuto.
+     * Modifica il testo di un commento, ma solo se chi lo chiede è davvero
+     * l'autore (altrimenti non faccio niente). Torna true se sono riuscito
+     * a salvare la modifica.
      */
     @Transactional
     public boolean aggiornaSeAutore(Long commentoId, String nuovoTesto, String username) {
@@ -55,7 +56,7 @@ public class CommentoService {
     }
 
     /**
-     * Elimina un commento SOLO se l'utente richiedente ne è l'autore.
+     * Elimina un commento, ma di nuovo solo se chi lo chiede è l'autore.
      */
     @Transactional
     public boolean eliminaSeAutore(Long commentoId, String username) {
@@ -69,8 +70,8 @@ public class CommentoService {
     }
 
     /**
-     * Elimina un commento se l'utente richiedente ne è l'autore, oppure se è un ADMIN
-     * (l'ADMIN può eliminare i commenti di chiunque).
+     * Come sopra, ma qui do anche la possibilità all'ADMIN di cancellare
+     * i commenti degli altri, non solo i suoi.
      */
     @Transactional
     public boolean elimina(Long commentoId, String username, boolean isAdmin) {
@@ -87,7 +88,8 @@ public class CommentoService {
     }
 
     /**
-     * Verifica se l'utente indicato è l'autore del commento (usato dalla UI).
+     * Controlla se un certo utente è l'autore di un commento. Mi serve nella
+     * view per decidere se far vedere il bottone "modifica".
      */
     @Transactional(readOnly = true)
     public boolean isAutore(Long commentoId, String username) {

@@ -25,7 +25,8 @@ public class Partita {
     @Min(value = 0, message = "I gol non possono essere negativi")
     private Integer goalsAway;
 
-    private String stato; // es. "PROGRAMMATA", "TERMINATA"
+    @Enumerated(EnumType.STRING)
+    private StatoPartita stato;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "torneo_id")
@@ -40,7 +41,7 @@ public class Partita {
     @ManyToOne(fetch = FetchType.LAZY)
     private Arbitro arbitro;
 
-    // --- GETTER E SETTER ---
+    // getter e setter
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -57,8 +58,8 @@ public class Partita {
     public Integer getGoalsAway() { return goalsAway; }
     public void setGoalsAway(Integer goalsAway) { this.goalsAway = goalsAway; }
 
-    public String getStato() { return stato; }
-    public void setStato(String stato) { this.stato = stato; }
+    public StatoPartita getStato() { return stato; }
+    public void setStato(StatoPartita stato) { this.stato = stato; }
 
     public Torneo getTorneo() { return torneo; }
     public void setTorneo(Torneo torneo) { this.torneo = torneo; }

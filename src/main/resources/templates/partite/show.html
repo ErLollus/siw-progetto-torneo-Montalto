@@ -12,7 +12,7 @@
     <div class="card card-soft p-4 mb-4">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
             <span class="badge badge-soft" th:text="${partita.torneo != null ? partita.torneo.nome : ''}"></span>
-            <span class="badge" th:classappend="${partita.stato == 'TERMINATA'} ? 'text-bg-secondary' : 'text-bg-warning'"
+            <span class="badge" th:classappend="${partita.stato != null and partita.stato.name() == 'TERMINATA'} ? 'text-bg-secondary' : 'text-bg-warning'"
                   th:text="${partita.stato}"></span>
         </div>
         <div class="row align-items-center text-center">

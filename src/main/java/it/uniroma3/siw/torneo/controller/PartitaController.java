@@ -1,6 +1,7 @@
 package it.uniroma3.siw.torneo.controller;
 
 import it.uniroma3.siw.torneo.model.Partita;
+import it.uniroma3.siw.torneo.model.StatoPartita;
 import it.uniroma3.siw.torneo.service.ArbitroService;
 import it.uniroma3.siw.torneo.service.PartitaService;
 import it.uniroma3.siw.torneo.service.SquadraService;
@@ -29,7 +30,7 @@ public class PartitaController {
 
     @GetMapping("/partite")
     public String getPartite(Model model) {
-        // Usiamo la variante con join fetch per evitare le N+1 query (Sez. 8 PDF)
+        // uso la versione con join fetch, altrimenti vado in N+1 query (vedi sezione 8 del PDF)
         model.addAttribute("partite", this.partitaService.findAllConDettagli());
         model.addAttribute("squadre", this.squadraService.findAll());
         return "partite/list.html";
@@ -55,11 +56,11 @@ public class PartitaController {
             popolaSelezioni(model);
             return "admin/partite/formNew.html";
         }
-        // Se sono stati inseriti entrambi i risultati, la partita è TERMINATA
+        // se ho già inserito entrambi i gol vuol dire che la partita è finita, la segno TERMINATA
         if (partita.getGoalsHome() != null && partita.getGoalsAway() != null) {
-            partita.setStato("TERMINATA");
-        } else if (partita.getStato() == null || partita.getStato().isBlank()) {
-            partita.setStato("PROGRAMMATA");
+            partita.setStato(StatoPartita.TERMINATA);
+        } else if (partita.getStato() == null) {
+            partita.setStato(StatoPartita.PROGRAMMATA);
         }
         this.partitaService.save(partita);
         return "redirect:/partite";
@@ -79,9 +80,9 @@ public class PartitaController {
             popolaSelezioni(model);
             return "admin/partite/formUpdate.html";
         }
-        // Se sono presenti i gol, registriamo il risultato -> stato TERMINATA
+        // stessa cosa qui: se ci sono i gol la partita è TERMINATA
         if (partita.getGoalsHome() != null && partita.getGoalsAway() != null) {
-            partita.setStato("TERMINATA");
+            partita.setStato(StatoPartita.TERMINATA);
         }
         this.partitaService.save(partita);
         return "redirect:/partite";

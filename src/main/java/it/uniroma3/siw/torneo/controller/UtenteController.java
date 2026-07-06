@@ -1,5 +1,6 @@
 package it.uniroma3.siw.torneo.controller;
 
+import it.uniroma3.siw.torneo.model.Ruolo;
 import it.uniroma3.siw.torneo.model.Utente;
 import it.uniroma3.siw.torneo.service.UtenteService;
 import jakarta.validation.Valid;
@@ -17,18 +18,18 @@ public class UtenteController {
     @Autowired
     private UtenteService utenteService;
 
-    // Mostra il form di registrazione
+    // pagina con il form per registrarsi
     @GetMapping("/register")
     public String formRegisterUser(Model model) {
         model.addAttribute("utente", new Utente());
         return "auth/register.html";
     }
 
-    // Salva l'utente appena registrato
+    // qui arrivano i dati del form e salvo il nuovo utente
     @PostMapping("/register")
     public String registerUser(@Valid @ModelAttribute("utente") Utente utente,
                                BindingResult bindingResult) {
-        // Username già in uso?
+        // controllo se lo username è già preso da qualcun altro
         if (utente.getUsername() != null && this.utenteService.existsByUsername(utente.getUsername())) {
             bindingResult.rejectValue("username", "utente.username.esistente",
                     "Username già in uso, scegline un altro.");
@@ -36,14 +37,14 @@ public class UtenteController {
         if (bindingResult.hasErrors()) {
             return "auth/register.html";
         }
-        // Ruolo predefinito per i nuovi iscritti
-        utente.setRuolo("USER");
+        // chi si registra da solo parte sempre come USER, l'ADMIN lo creo io a mano in InitData
+        utente.setRuolo(Ruolo.USER);
         this.utenteService.save(utente);
         return "redirect:/login?registered";
     }
 
     @GetMapping("/login")
     public String showLoginForm() {
-        return "auth/login"; // <-- IMPORTANTE: Solo "login", senza ".html"
+        return "auth/login"; // occhio: NON devo mettere ".html" altrimenti Thymeleaf non trova il template
     }
 }

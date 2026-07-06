@@ -7,10 +7,9 @@ import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 /**
- * Commento lasciato da un utente registrato ad una partita.
- * Relazioni:
- *  - un commento appartiene ad una sola partita (ManyToOne)
- *  - un commento è scritto da un solo utente (ManyToOne)
+ * Rappresenta un commento che un utente registrato lascia su una partita.
+ * Un commento appartiene a una sola partita e ha un solo autore, quindi
+ * sono entrambe relazioni ManyToOne.
  */
 @Entity
 public class Commento {
@@ -35,7 +34,7 @@ public class Commento {
     @JoinColumn(name = "autore_id")
     private Utente autore;
 
-    // --- GETTER E SETTER ---
+    // getter e setter
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

@@ -26,7 +26,7 @@ public class ArbitroService {
     public void deleteById(Long id) {
         Arbitro arbitro = this.arbitroRepository.findById(id).orElse(null);
         if (arbitro != null) {
-            // Togliamo l'arbitro da tutte le partite che ha diretto (senza cancellare le partite!)
+            // tolgo l'arbitro da tutte le partite dove compare, ma le partite restano (non le cancello)
             List<Partita> partiteDirecte = this.partitaRepository.findByArbitro(arbitro);
             for (Partita p : partiteDirecte) {
                 p.setArbitro(null);

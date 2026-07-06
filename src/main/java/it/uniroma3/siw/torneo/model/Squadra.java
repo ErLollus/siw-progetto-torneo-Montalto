@@ -26,17 +26,17 @@ public class Squadra {
     @NotBlank(message = "La città è obbligatoria")
     private String citta;
 
-    // Ecco la relazione! Una squadra ha una lista di tornei a cui partecipa.
+    // relazione ManyToMany: una squadra può partecipare a più tornei
     @ManyToMany(fetch = FetchType.LAZY)
     private List<Torneo> tornei;
 
-    // URL esterno oppure nome del file caricato nella cartella di upload, null se assente
+    // può essere un url esterno oppure il nome del file caricato in upload, null se non c'è immagine
     private String immagine;
 
     public String getImmagine() { return immagine; }
     public void setImmagine(String immagine) { this.immagine = immagine; }
 
-    // --- GETTER E SETTER ---
+    // getter e setter
     public String getColoreMaglia() {
         return coloreMaglia;
     }
@@ -94,7 +94,7 @@ public class Squadra {
     public void setGiocatori(List<Giocatore> giocatori){
         this.giocatori = giocatori;
     }
-    // Sotto le altre variabili
+    // relazioni con le partite, sia quelle in casa che in trasferta
 
 
     @OneToMany(mappedBy = "squadraCasa", fetch = FetchType.LAZY)
@@ -103,7 +103,7 @@ public class Squadra {
     @OneToMany(mappedBy = "squadraTrasferta", fetch = FetchType.LAZY)
     private List<Partita> partiteInTrasferta;
 
-    // --- In fondo alla classe aggiungi i Getter e Setter ---
+    // getter e setter per le partite in casa/trasferta
 
 
     public List<Partita> getPartiteInCasa() {

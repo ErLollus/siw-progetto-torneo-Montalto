@@ -21,15 +21,15 @@ public class TorneoController {
     @Autowired
     private TorneoService torneoService;
 
-    @GetMapping("/tornei") // Quando l'utente va su http://localhost:8080/tornei
+    @GetMapping("/tornei") // pagina con l'elenco di tutti i tornei
     public String getTornei(Model model) {
-        // Prendi tutti i tornei dal Service e mettili nel "Model" (il cestino per la pagina HTML)
+        // prendo tutti i tornei dal service e li metto nel Model per passarli alla pagina HTML
         model.addAttribute("tornei",this.torneoService.count());
         model.addAttribute("tornei", this.torneoService.findAll());
         return "tornei/list.html"; // Vai a cercare il file tornei.html nella cartella templates
     }
 
-    // Dettaglio di un torneo: squadre partecipanti + calendario partite + link classifica (Sez. 4.1)
+    // dettaglio di un torneo: squadre iscritte, calendario e link alla classifica (sezione 4.1 del PDF)
     @GetMapping("/torneo/{id}")
     public String getTorneo(@PathVariable("id") Long id, Model model) {
         Torneo torneo = this.torneoService.findById(id);
@@ -40,22 +40,22 @@ public class TorneoController {
         return "tornei/show";
     }
 
-    // 1. Metodo per mostrare il form di inserimento
+    // form per creare un torneo nuovo
     @GetMapping("/admin/formNewTorneo")
     public String formNewTorneo(Model model) {
-        model.addAttribute("torneo", new Torneo()); // Passiamo un oggetto vuoto da riempire
+        model.addAttribute("torneo", new Torneo()); // oggetto vuoto che il form andrà a riempire
         return "admin/tornei/formNew.html";
     }
 
-    // 2. Metodo per ricevere i dati e salvare
+    // riceve i dati del form e salva il torneo
     @PostMapping("/admin/torneo")
     public String newTorneo(@Valid @ModelAttribute("torneo") Torneo torneo,
                             BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "admin/tornei/formNew.html";
         }
-        this.torneoService.saveTorneo(torneo); // Salviamo il nuovo torneo
-        return "redirect:/tornei"; // Dopo il salvataggio, torna alla lista
+        this.torneoService.saveTorneo(torneo); // salvo il torneo nuovo
+        return "redirect:/tornei"; // dopo il salvataggio torno alla lista
     }
     @GetMapping("/admin/deleteTorneo/{id}")
     public String deleteTorneo(@PathVariable("id") Long id) {
@@ -63,23 +63,23 @@ public class TorneoController {
         return "redirect:/tornei";
     }
 
-    // 1. Mostra il form di modifica pre-popolato con i dati del torneo
+    // form di modifica, già riempito con i dati del torneo esistente
     @GetMapping("/admin/formUpdateTorneo/{id}")
     public String formUpdateTorneo(@PathVariable("id") Long id, Model model) {
-        // Cerchiamo il torneo sul DB tramite l'id
+        // cerco il torneo sul database tramite l'id
         Torneo torneo = this.torneoService.findById(id);
         model.addAttribute("torneo", torneo);
         return "admin/tornei/formUpdate.html";
     }
 
-    // 2. Salva le modifiche (usa lo stesso endpoint del "newTorneo")
+    // salva le modifiche (uso lo stesso metodo del service che uso per la creazione)
     @PostMapping("/admin/updateTorneo")
     public String updateTorneo(@Valid @ModelAttribute("torneo") Torneo torneo,
                                BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "admin/tornei/formUpdate.html";
         }
-        // Se 'torneo' ha l'id valorizzato, il save farà l'UPDATE sul DB
+        // se l'oggetto torneo ha già l'id, save() fa l'update invece dell'insert
         this.torneoService.saveTorneo(torneo);
         return "redirect:/tornei";
     }
@@ -94,7 +94,7 @@ public class TorneoController {
     }
     @GetMapping("/torneo/{id}/classifica-react")
     public String visualizzaClassificaReact(@PathVariable("id") Long id, Model model) {
-        // Passiamo solo l'ID, i dati li caricherà React via API
+        // passo solo l'id, poi ci pensa React a chiamare l'API e caricare i dati
         model.addAttribute("torneoId", id);
         return "tornei/classifica-react";
     }

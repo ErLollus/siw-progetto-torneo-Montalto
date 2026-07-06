@@ -6,9 +6,10 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 /**
- * Gestione centralizzata degli errori (criterio "gestione degli errori" della
- * Sezione 11 del PDF). Mostra una pagina di errore leggibile invece dello
- * stack trace di default.
+ * Gestisco qui in un posto solo gli errori dell'applicazione (è uno dei
+ * punti richiesti nella sezione 11 del PDF, "gestione degli errori").
+ * Senza questo Spring mostrerebbe lo stack trace grezzo di default, che
+ * non è il massimo da far vedere a un utente qualsiasi.
  */
 @ControllerAdvice
 public class GlobalExceptionHandler {

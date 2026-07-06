@@ -18,21 +18,21 @@ public class ArbitroController {
     @Autowired
     private ArbitroService arbitroService;
 
-    // Mostra la lista di tutti gli arbitri
+    // mostra la lista di tutti gli arbitri
     @GetMapping("/arbitri")
     public String getArbitri(Model model) {
         model.addAttribute("arbitri", this.arbitroService.findAll());
         return "arbitri/list.html";
     }
 
-    // Mostra il form per inserire un nuovo arbitro
+    // form per inserire un arbitro nuovo
     @GetMapping("/admin/formNewArbitro")
     public String formNewArbitro(Model model) {
         model.addAttribute("arbitro", new Arbitro());
         return "admin/arbitri/formNew.html";
     }
 
-    // Riceve i dati dal form e salva l'arbitro
+    // prende i dati dal form e salva l'arbitro
     @PostMapping("/admin/arbitro")
     public String newArbitro(@Valid @ModelAttribute("arbitro") Arbitro arbitro,
                              BindingResult bindingResult) {

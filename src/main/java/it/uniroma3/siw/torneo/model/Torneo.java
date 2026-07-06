@@ -28,7 +28,7 @@ public class Torneo {
     @Column(length = 1000)
     private String descrizione;
 
-    // --- GETTER E SETTER ---
+    // getter e setter
 
     public Long getId() {
         return id;
@@ -61,7 +61,7 @@ public class Torneo {
     public void setDescrizione(String descrizione) {
         this.descrizione = descrizione;
     }
-    // Aggiungi questo sotto "descrizione"
+    // relazione con le squadre iscritte (ManyToMany, lato non proprietario)
     @ManyToMany(mappedBy = "tornei", fetch = FetchType.LAZY)
     private List<Squadra> squadre;
     public List<Squadra> getSquadre() {
@@ -71,11 +71,11 @@ public class Torneo {
     public void setSquadre(List<Squadra> squadre) {
         this.squadre = squadre;
     }
-    // Sotto le altre variabili (nome, anno, ecc.)
+    // relazione con le partite del torneo
     @OneToMany(mappedBy = "torneo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Partita> partite;
 
-    // --- In fondo alla classe aggiungi i Getter e Setter ---
+    // getter e setter per le partite
     public List<Partita> getPartite() {
         return partite;
     }

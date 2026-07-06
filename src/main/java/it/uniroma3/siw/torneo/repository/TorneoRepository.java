@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TorneoRepository extends CrudRepository<Torneo, Long> {
-    // Non devi scrivere nulla qui dentro!
+    // Spring Data ci pensa da solo, qui non devo scrivere query custom
 }

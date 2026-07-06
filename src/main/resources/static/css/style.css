@@ -1,5 +1,6 @@
 /* ============================================================
-   SiwTorneo — tema moderno condiviso
+   Foglio di stile unico per tutto il progetto (i colori li ho
+   scelti io, spero si vedano bene anche in dark mode)
    ============================================================ */
 :root {
     --brand: #3b82f6;          /* blu principale, bottoni e badge */

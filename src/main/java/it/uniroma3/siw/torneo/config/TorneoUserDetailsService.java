@@ -10,10 +10,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 /**
- * Carica l'utente dal database (entità Utente) per l'autenticazione.
- * Il ruolo memorizzato ("USER"/"ADMIN") viene mappato sull'authority
- * "ROLE_USER"/"ROLE_ADMIN", così da poter usare hasRole(...) nella
- * configurazione di sicurezza.
+ * Questa classe dice a Spring Security come recuperare un utente: va a
+ * cercarlo nel database tramite la nostra entità Utente. Il ruolo che ho
+ * salvato (USER o ADMIN) lo trasformo in ROLE_USER / ROLE_ADMIN, che è il
+ * formato che vuole Spring per poter usare hasRole(...) dopo.
  */
 @Service
 public class TorneoUserDetailsService implements UserDetailsService {
@@ -26,13 +26,12 @@ public class TorneoUserDetailsService implements UserDetailsService {
         Utente utente = this.utenteRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Utente non trovato: " + username));
 
-        String ruolo = (utente.getRuolo() == null || utente.getRuolo().isBlank())
-                ? "USER" : utente.getRuolo();
+        String ruolo = (utente.getRuolo() == null) ? "USER" : utente.getRuolo().name();
 
         return User.builder()
                 .username(utente.getUsername())
                 .password(utente.getPassword())
-                .roles(ruolo) // aggiunge automaticamente il prefisso ROLE_
+                .roles(ruolo) // il prefisso ROLE_ lo aggiunge da solo, non serve scriverlo io
                 .build();
     }
 }

@@ -33,14 +33,14 @@ public class Giocatore {
     @Max(value = 250, message = "Altezza massima 250 cm")
     private Integer altezza;
 
-    // Relazione: Molti giocatori appartengono a una sola squadra
+    // relazione: tanti giocatori possono stare nella stessa squadra
     @ManyToOne(fetch = FetchType.LAZY)
     private Squadra squadra;
 
-    // Nome del file immagine caricato (salvato nella cartella di upload), null se assente
+    // nome del file dell'immagine caricata (sta nella cartella di upload), null se non c'è foto
     private String immagine;
 
-    // --- GETTER E SETTER ---
+    // getter e setter
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ArbitroRepository extends CrudRepository<Arbitro, Long> {
-    // Non devi scrivere nulla qui dentro!
+    // anche qui Spring Data fa tutto da solo, non serve altro
 }

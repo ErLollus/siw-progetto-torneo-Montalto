@@ -11,9 +11,10 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 /**
- * Salva i file caricati (immagini di giocatori e squadre) su una cartella
- * esterna al classpath, in modo che restino disponibili anche a runtime
- * (a differenza di src/main/resources, non scrivibile una volta impacchettata l'app).
+ * Classe che salva le immagini caricate (per giocatori e squadre) in una
+ * cartella fuori dal progetto. L'ho fatto così perché src/main/resources,
+ * una volta impacchettato il jar, non è più scrivibile: se salvassi lì le
+ * immagini sparirebbero appena riavvio l'app in produzione.
  */
 @Service
 public class FileStorageService {
